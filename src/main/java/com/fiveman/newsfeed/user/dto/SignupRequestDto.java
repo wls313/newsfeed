@@ -1,4 +1,8 @@
 package com.fiveman.newsfeed.user.dto;
 
-public class SignupRequestDto {
+public record SignupRequestDto(
+        String email,
+        String password,
+        Short age) {
+
 }
