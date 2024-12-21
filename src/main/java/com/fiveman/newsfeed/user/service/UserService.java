@@ -1,4 +1,10 @@
 package com.fiveman.newsfeed.user.service;
 
-public class UserService {
+import com.fiveman.newsfeed.user.dto.SignupRequestDto;
+import com.fiveman.newsfeed.user.dto.UserDto;
+
+
+public interface UserService {
+
+    UserDto create(SignupRequestDto request);
 }
