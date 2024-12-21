@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.comment.service;
 
+import com.fiveman.newsfeed.comment.dto.CommentRequestDto;
 import com.fiveman.newsfeed.comment.dto.CommentResponseDto;
 import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
 import com.fiveman.newsfeed.comment.repository.CommentRepository;
@@ -9,9 +10,9 @@ import com.fiveman.newsfeed.common.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -35,17 +36,7 @@ public class CommentService {
         return CommentResponseDto.of(commentRepository.save(comment));
     }
 
-    @Transactional
     public CommentResponseDto updateCommentByboardId(CommentServiceRequestDto commentServiceRequestDto){
-
-            Comment comment = commentRepository.findById(commentServiceRequestDto.getCommentId()).orElseThrow(()
-                    -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
-            if(comment.getUser().getUserId().equals(commentServiceRequestDto.getUserId())){
-                comment.updateContent(commentServiceRequestDto.getContent());
-                return CommentResponseDto.of(comment);
-            }else {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
 
     }
 
