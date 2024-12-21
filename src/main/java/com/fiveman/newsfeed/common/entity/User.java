@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.common.entity;
 
+import com.fiveman.newsfeed.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -18,9 +19,17 @@ public class User extends BaseEntity {
     private String password;
 
     @Column(nullable=false)
-    private String age;
+    private Short age;
 
-    @Column
+    @Column(columnDefinition = "BOOLEAN default false")
     private boolean isDeleted;
+
+    public static User of(SignupRequestDto request, String encodePassword) {
+        User user = new User();
+        user.email = request.email();
+        user.password = encodePassword;
+        user.age = request.age();
+        return user;
+    }
 
 }
