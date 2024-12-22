@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.comment.service;
 
+import com.fiveman.newsfeed.board.repository.BoardRepository;
 import com.fiveman.newsfeed.comment.dto.CommentResponseDto;
 import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
 import com.fiveman.newsfeed.comment.repository.CommentRepository;
