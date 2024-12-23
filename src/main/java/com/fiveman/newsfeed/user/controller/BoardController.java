@@ -3,6 +3,7 @@ package com.fiveman.newsfeed.user.controller;
 import com.fiveman.newsfeed.common.entity.Board;  // 임포트 경로 수정
 import com.fiveman.newsfeed.user.dto.BoardRequestDto;
 import com.fiveman.newsfeed.user.service.BoardService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,8 +20,8 @@ public class BoardController {
     }
 
     @PostMapping
-    public ResponseEntity<Board> createBoard(@RequestBody BoardRequestDto boardRequestDto, @RequestParam Long userId) {
-        Board createdBoard = boardService.createBoard(boardRequestDto, userId);
+    public ResponseEntity<Board> createBoard(@RequestBody BoardRequestDto dto) {
+        Board createdBoard = boardService.createBoard(dto.id(), dto.title(), dto.contents());
         return ResponseEntity.ok(createdBoard);
     }
 
