@@ -8,11 +8,12 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-@Embeddable
+@Embeddable     // @EmbeddedId 와 매핑됨
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
+// Jpa가 복합키를 처리할 수 있도록 명시하는 클래스
 public class FriendId implements Serializable {
 
     private Long fromUserId;
