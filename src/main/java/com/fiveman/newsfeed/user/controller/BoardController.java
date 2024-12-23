@@ -25,8 +25,8 @@ public class BoardController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Board>> getBoardList(@RequestParam(required = false) String title) {
-        List<Board> boards = boardService.getBoardList(title);
+    public ResponseEntity<List<Board>> getAllBoards() {
+        List<Board> boards = boardService.getAllBoards();
         return ResponseEntity.ok(boards);
     }
 
@@ -35,4 +35,11 @@ public class BoardController {
         Board updatedBoard = boardService.updateBoard(boardId, dto.title(), dto.contents());
         return ResponseEntity.ok(updatedBoard);
     }
+
+    @DeleteMapping("/{boardId}")
+    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
+        boardService.deleteBoard(boardId);
+        return ResponseEntity.noContent().build(); // 204 No Content 응답
+    }
+
 }
