@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/api/boards")
 @RestController
 public class CommentController {
-    CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping("/{boardId}/comments")
     public ResponseEntity<List<CommentResponseDto>> findByAllComment(@PathVariable Long boardId) {
@@ -33,10 +33,9 @@ public class CommentController {
         HttpSession session = request.getSession(false);
 
         return new ResponseEntity<>(commentService.createCommentByboardId(
-
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userid"),
+                        (Long) session.getAttribute("userId"),
                         boardId,
                         commentRequestDto.getContent())),
                 //생성된 값이 반환되면 httpstatus값으로 201 created를 반환합니다.
@@ -52,7 +51,7 @@ public class CommentController {
 
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userid"),
+                        (Long) session.getAttribute("userId"),
                         boardId,
                         commentRequestDto.getCommentId(),
                         commentRequestDto.getContent())),
@@ -66,7 +65,7 @@ public class CommentController {
 
         boolean deleteResult = commentService.deleteCommentByboardId( //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userid"),
+                        (Long) session.getAttribute("userId"),
                         boardId,
                         commentRequestDto.getCommentId()));
         if (deleteResult) {
@@ -75,7 +74,9 @@ public class CommentController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-
     }
+
+
+
 }
 
