@@ -1,15 +1,14 @@
 package com.fiveman.newsfeed.user.service;
 
 import com.fiveman.newsfeed.common.entity.Board;
-import com.fiveman.newsfeed.common.entity.User;  // User 클래스 임포트
-import com.fiveman.newsfeed.user.dto.BoardRequestDto;
 import com.fiveman.newsfeed.user.repository.BoardRepository;
 import com.fiveman.newsfeed.user.repository.UserRepository;  // UserRepository 임포트
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,20 +25,26 @@ public class BoardService {
         return boardRepository.save(board);
     }
 
-    // 모든 게시물 조회 메서드 추가
-    public List<Board> getAllBoards() {
-        return boardRepository.findAll();  // BoardRepository에서 findAll() 메서드를 호출하여 모든 게시물 반환
-    }
-    // 게시글 수정 메서드 추가
-    public Board updateBoard(Long boardId, BoardRequestDto dto) {
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
-        if (optionalBoard.isPresent()) {
-            Board board = optionalBoard.get();
-            board.setTitle(dto.title());  // 제목 수정
-            board.setContent(dto.contents());  // 내용 수정
-            return boardRepository.save(board);  // 수정된 게시글 저장
-        } else {
-            throw new RuntimeException("Board not found with id: " + boardId);
+
+    public List<Board> getBoardList(String title) {
+
+        List<Board> BoardList = new ArrayList<>();
+
+        if(title != null) {
+            BoardList = boardRepository.findByTitle(title);
         }
+
+        if(title == null) {
+            BoardList = boardRepository.findAll();
+        }
+        return BoardList;
+    }
+
+    @Transactional
+    public Board updateBoard(Long boardId, String title, String contents) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("Board not found with ID: " + boardId));
+        board.updateBoard(title, contents); // Board의 메서드를 호출하여 수정
+        return board; // 변경된 엔티티는 JPA의 트랜잭션 관리에 의해 자동 저장
     }
 }
