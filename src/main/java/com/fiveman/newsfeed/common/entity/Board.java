@@ -5,9 +5,11 @@ import java.time.LocalDateTime;
 import com.fiveman.newsfeed.common.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter // 필드에 대한 Setter 메서드 자동 생성
 @NoArgsConstructor
 public class Board extends BaseEntity {
 

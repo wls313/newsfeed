@@ -30,4 +30,11 @@ public class BoardController {
         List<Board> boards = boardService.getAllBoards();
         return ResponseEntity.ok(boards);
     }
+
+    // 게시글 수정 PATCH 요청 처리
+    @PatchMapping("/{boardId}")
+    public ResponseEntity<Board> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto dto) {
+        Board updatedBoard = boardService.updateBoard(boardId, dto);
+        return ResponseEntity.ok(updatedBoard);
+    }
 }

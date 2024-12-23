@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,16 @@ public class BoardService {
     public List<Board> getAllBoards() {
         return boardRepository.findAll();  // BoardRepository에서 findAll() 메서드를 호출하여 모든 게시물 반환
     }
-
-
+    // 게시글 수정 메서드 추가
+    public Board updateBoard(Long boardId, BoardRequestDto dto) {
+        Optional<Board> optionalBoard = boardRepository.findById(boardId);
+        if (optionalBoard.isPresent()) {
+            Board board = optionalBoard.get();
+            board.setTitle(dto.title());  // 제목 수정
+            board.setContent(dto.contents());  // 내용 수정
+            return boardRepository.save(board);  // 수정된 게시글 저장
+        } else {
+            throw new RuntimeException("Board not found with id: " + boardId);
+        }
+    }
 }
