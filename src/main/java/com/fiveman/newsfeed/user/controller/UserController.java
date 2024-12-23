@@ -1,7 +1,7 @@
 package com.fiveman.newsfeed.user.controller;
 
-import com.fiveman.newsfeed.user.dto.SignupRequestDto;
-import com.fiveman.newsfeed.user.dto.UserDto;
+
+import com.fiveman.newsfeed.user.dto.*;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
-
     private final UserService userService;
 
     @PostMapping("/signup")
@@ -26,12 +25,11 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @GetMapping("/email")
-    public ResponseEntity<UserDto> findByEmail(@RequestParam String email) {
+    @GetMapping("/{email}")
+    public ResponseEntity<UserResponseDto> findByEmail(@PathVariable String email){
+        UserResponseDto userResponseDto = userService.findByEmail(email);
 
-        UserDto response = userService.findByEmail(email);
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(userResponseDto,HttpStatus.OK);
     }
 
     @GetMapping
@@ -41,5 +39,26 @@ public class UserController {
     ) {
         Pageable pageable = PageRequest.of(pageNumber-1,pageSize);
         return new ResponseEntity<>(userService.findAll(pageable), HttpStatus.OK);
+    }
+
+    @PatchMapping("/{email}")
+    public ResponseEntity<UserResponseDto> updateUser (@PathVariable String email, @RequestBody UserRequestDto requestDto){
+        userService.updateUser(email, requestDto.getPassword(),requestDto.getAge());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PatchMapping("password/{email}")
+    public ResponseEntity<UserPasswordRequestDto> updatePassword (@PathVariable String email, @RequestBody UserPasswordRequestDto requestDto){
+        userService.updatePassword(email,requestDto.getOldPassword(),requestDto.getNewPassword());
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity<UserResponseDto> delete(@PathVariable String email) {
+        userService.delete(email);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

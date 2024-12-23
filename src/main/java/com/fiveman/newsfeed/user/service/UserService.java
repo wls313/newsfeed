@@ -46,7 +46,7 @@ public class UserService {
 
     private void isDuplicateEmail(String email) {
         if(userRepository.existsByEmail(email)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT); //CONFLICT 가 더 좋을거같습니다.
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
     }
 
@@ -79,7 +79,6 @@ public class UserService {
         userRepository.save(user);
     }
 
-    // 비밀번호가 조건을 충족하는지 validation 체크용 입니다.
     private void validatePassword(String newPassword) {
         if (newPassword.length() < 8) {
             throw new IllegalArgumentException("비밀번호는 최소 8자 이상이어야 합니다.");
