@@ -9,7 +9,6 @@ import lombok.Setter;
 
 @Entity
 @Getter
-@Setter // 필드에 대한 Setter 메서드 자동 생성
 @NoArgsConstructor
 public class Board extends BaseEntity {
 
@@ -25,6 +24,11 @@ public class Board extends BaseEntity {
     private User user;
 
     public Board(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
+
+    public void updateBoard(String title, String content) {
         this.title = title;
         this.content = content;
     }
