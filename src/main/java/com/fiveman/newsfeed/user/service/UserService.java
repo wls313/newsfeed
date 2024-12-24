@@ -104,4 +104,9 @@ public class UserService {
         user.updateIsDelete(true);
         userRepository.save(user);
     }
+
+    public User findById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
 }
