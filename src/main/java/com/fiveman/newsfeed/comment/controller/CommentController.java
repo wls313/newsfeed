@@ -86,7 +86,8 @@ public class CommentController {
 
     @DeleteMapping("/{boardId}/comments/unlike")
     public ResponseEntity<Void> unlikeComment(@PathVariable Long boardId, @RequestBody LikeRequestDto dto) {
-        return commentService.unlikeComment(boardId, dto.targetId(), dto.userId());
+        commentService.unlikeComment(boardId, dto.targetId(), dto.userId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 

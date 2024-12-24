@@ -11,6 +11,7 @@ import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -81,7 +82,16 @@ public class CommentService {
             comment.like(user);
     }
 
-    public ResponseEntity<Void> unlikeComment(Long boardId, Long commentId, Long userId) {
-        return null;
+    @Transactional
+    public void unlikeComment(Long boardId, Long commentId, Long userId) {
+        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+        Like like = new Like(comment, user);
+
+        if(likeRepository.existsById(like.getLikeId())) {
+            likeRepository.deleteById(like.getLikeId());
+            comment.unlike(user);
+        }
+
     }
 }
