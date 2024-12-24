@@ -14,7 +14,6 @@ public interface UserRepository extends JpaRepository<User,String> {
 
         User user = findByEmail(email).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist email = " + email));
 
-        // isDelete 가 true 인경우 NOTFOUND 가 출력되게 했습니다
         if (user.isDeleted()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with email = " + email + " is deleted.");
         }
