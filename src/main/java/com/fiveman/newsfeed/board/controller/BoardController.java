@@ -1,8 +1,8 @@
-package com.fiveman.newsfeed.user.controller;
+package com.fiveman.newsfeed.board.controller;
 
 import com.fiveman.newsfeed.common.entity.Board;
-import com.fiveman.newsfeed.user.dto.BoardRequestDto;
-import com.fiveman.newsfeed.user.service.BoardService;
+import com.fiveman.newsfeed.board.dto.BoardRequestDto;
+import com.fiveman.newsfeed.board.service.BoardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

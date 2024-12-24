@@ -1,4 +1,4 @@
-package com.fiveman.newsfeed.user.repository;
+package com.fiveman.newsfeed.board.repository;
 
 import com.fiveman.newsfeed.common.entity.Board;
 import org.springframework.data.jpa.repository.JpaRepository;

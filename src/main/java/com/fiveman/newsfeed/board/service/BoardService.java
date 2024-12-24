@@ -1,15 +1,12 @@
-package com.fiveman.newsfeed.user.service;
+package com.fiveman.newsfeed.board.service;
 
 import com.fiveman.newsfeed.common.entity.Board;
-import com.fiveman.newsfeed.common.entity.User;  // User 클래스 임포트
-import com.fiveman.newsfeed.user.dto.BoardRequestDto;
-import com.fiveman.newsfeed.user.repository.BoardRepository; // UserRepository 임포트
+import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 임포트
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
