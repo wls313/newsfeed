@@ -77,7 +77,13 @@ public class CommentService {
             Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
             User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
 
+
             Like like = new Like(comment, user);
+
+            if(likeRepository.existsById(like.getLikeId())) {
+                throw new IllegalArgumentException();
+            }
+
             likeRepository.save(like);
             comment.like(user);
     }

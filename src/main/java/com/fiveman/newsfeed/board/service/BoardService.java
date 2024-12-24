@@ -56,6 +56,11 @@ public class BoardService {
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
 
         Like like = new Like(board, user);
+
+        if(likeRepository.existsById(like.getLikeId())) {
+            throw new IllegalArgumentException();
+        }
+
         likeRepository.save(like);
         board.like(user);
 
@@ -65,6 +70,7 @@ public class BoardService {
     public void unlikeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
+
         Like like = new Like(board, user);
 
         if(likeRepository.existsById(like.getLikeId())) {
