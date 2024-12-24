@@ -41,6 +41,7 @@ public class BoardService {
         board.updateBoard(title, contents); // Board의 메서드를 호출하여 수정
         return board; // 변경된 엔티티는 JPA의 트랜잭션 관리에 의해 자동 저장
     }
+
     @Transactional
     public void deleteBoard(Long boardId) {
         if (!boardRepository.existsById(boardId)) {
@@ -49,13 +50,15 @@ public class BoardService {
         boardRepository.deleteById(boardId); // JPA의 기본 deleteById 메서드 사용
     }
 
+    @Transactional
     public void likeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
 
         Like like = new Like(board, user);
-
         likeRepository.save(like);
+        board.like(user);
+
     }
 
     public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
