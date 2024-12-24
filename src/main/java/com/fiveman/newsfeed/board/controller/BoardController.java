@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.board.controller;
 
+import com.fiveman.newsfeed.board.dto.CreateBoardResponseDto;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.dto.BoardRequestDto;
 import com.fiveman.newsfeed.board.service.BoardService;
@@ -22,9 +23,8 @@ public class BoardController {
     }
 
     @PostMapping
-    public ResponseEntity<Board> createBoard(@RequestBody BoardRequestDto dto) {
-        Board createdBoard = boardService.createBoard(dto.id(), dto.title(), dto.contents());
-        return ResponseEntity.ok(createdBoard);
+    public ResponseEntity<CreateBoardResponseDto> createBoard(@RequestBody BoardRequestDto dto) {
+        return new ResponseEntity<>(boardService.createBoard(dto.id(), dto.title(), dto.contents()), HttpStatus.OK);
     }
 
     @GetMapping
