@@ -5,7 +5,6 @@ import lombok.Getter;
 @Getter
 public class UserResponseDto {
 
-
     private final String username;
     private final String email;
 

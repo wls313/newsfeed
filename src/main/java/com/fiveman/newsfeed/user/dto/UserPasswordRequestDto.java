@@ -8,7 +8,6 @@ public class UserPasswordRequestDto {
 
     private final String newPassword;
 
-
     public UserPasswordRequestDto(String oldPassword, String newPassword) {
         this.oldPassword = oldPassword;
         this.newPassword = newPassword;
