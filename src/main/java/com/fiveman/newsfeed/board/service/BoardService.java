@@ -73,9 +73,12 @@ public class BoardService {
 
         Like like = new Like(board, user);
 
+
         if(likeRepository.existsById(like.getLikeId())) {
             likeRepository.deleteById(like.getLikeId());
             board.unlike(user);
+        } else {
+            throw new IllegalArgumentException();
         }
 
     }

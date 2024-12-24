@@ -97,6 +97,8 @@ public class CommentService {
         if(likeRepository.existsById(like.getLikeId())) {
             likeRepository.deleteById(like.getLikeId());
             comment.unlike(user);
+        } else {
+            throw new IllegalArgumentException();
         }
 
     }
