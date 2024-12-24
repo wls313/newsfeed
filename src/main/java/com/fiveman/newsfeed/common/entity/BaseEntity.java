@@ -21,5 +21,9 @@ public class BaseEntity {
 
     @LastModifiedDate
     @Column
+
+
+
+
     private LocalDateTime updatedAt;
 }
