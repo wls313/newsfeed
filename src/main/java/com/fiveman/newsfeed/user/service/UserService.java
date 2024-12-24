@@ -23,7 +23,7 @@ public class UserService {
 
 
 
-    public UserDto create(SignupRequestDto request) {
+    public UserDto createUser(SignupRequestDto request) {
         isDuplicateEmail(request.email());
 
         validatePassword(request.password());
