@@ -9,6 +9,7 @@ import com.fiveman.newsfeed.common.entity.Comment;
 import com.fiveman.newsfeed.common.entity.Like;
 import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
+import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.RequiredTypes;
@@ -73,10 +74,9 @@ public class CommentService {
     }
 
     @Transactional
-    public void likeComment(Long boardId, Long commentId, Long userId) {
+    public LikeResponseDto likeComment(Long boardId, Long commentId, Long userId) {
             Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
             User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
-
 
             Like like = new Like(comment, user);
 
@@ -86,10 +86,12 @@ public class CommentService {
 
             likeRepository.save(like);
             comment.like(user);
+
+            return new LikeResponseDto("댓글 좋아요에 성공했습니다", comment.getLikeCount());
     }
 
     @Transactional
-    public void unlikeComment(Long boardId, Long commentId, Long userId) {
+    public LikeResponseDto unlikeComment(Long boardId, Long commentId, Long userId) {
         Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
         Like like = new Like(comment, user);
@@ -97,7 +99,10 @@ public class CommentService {
         if(likeRepository.existsById(like.getLikeId())) {
             likeRepository.deleteById(like.getLikeId());
             comment.unlike(user);
+        } else {
+            throw new IllegalArgumentException();
         }
 
+        return new LikeResponseDto("댓글 좋아요를 취소했습니다", comment.getLikeCount());
     }
 }
