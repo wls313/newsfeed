@@ -2,6 +2,8 @@ package com.fiveman.newsfeed.board.service;
 
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 임포트
+import com.fiveman.newsfeed.like.LikeRepository;
+import com.fiveman.newsfeed.like.LikeResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
@@ -13,7 +15,7 @@ import java.util.List;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-
+    private final LikeRepository likeRepository;
 
 
     public Board createBoard(Long id, String title, String contents) {
@@ -41,5 +43,11 @@ public class BoardService {
             throw new IllegalArgumentException("Board not found with ID: " + boardId);
         }
         boardRepository.deleteById(boardId); // JPA의 기본 deleteById 메서드 사용
+    }
+
+    public LikeResponseDto likeBoard(Long boardId, Long userId) { return null; }
+
+    public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
+        return null;
     }
 }
