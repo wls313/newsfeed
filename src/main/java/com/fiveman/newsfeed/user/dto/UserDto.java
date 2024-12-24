@@ -11,7 +11,6 @@ public record UserDto(
         LocalDateTime createdAt,
         LocalDateTime updatedAt
 ) {
-
     public static UserDto from(User user) {
         return new UserDto(
                 user.getUserId(),
