@@ -61,7 +61,16 @@ public class BoardService {
 
     }
 
-    public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
-        return null;
+    @Transactional
+    public void unlikeBoard(Long boardId, Long userId) {
+        User user = userService.findById(userId);
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
+        Like like = new Like(board, user);
+
+        if(likeRepository.existsById(like.getLikeId())) {
+            likeRepository.deleteById(like.getLikeId());
+            board.unlike(user);
+        }
+
     }
 }
