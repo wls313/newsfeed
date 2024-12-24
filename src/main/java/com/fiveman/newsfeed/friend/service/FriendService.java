@@ -6,7 +6,6 @@ import com.fiveman.newsfeed.friend.dto.FriendListResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendRequestDto;
 import com.fiveman.newsfeed.friend.repository.FriendRepository;
-import com.fiveman.newsfeed.user.repository.UserRepository;
 import com.fiveman.newsfeed.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
