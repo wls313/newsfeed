@@ -5,6 +5,7 @@ import com.fiveman.newsfeed.board.dto.BoardRequestDto;
 import com.fiveman.newsfeed.board.service.BoardService;
 import com.fiveman.newsfeed.like.LikeRequestDto;
 import com.fiveman.newsfeed.like.LikeResponseDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,8 +46,9 @@ public class BoardController {
     }
 
     @PostMapping("/{boardId}/like")
-    public LikeResponseDto likeBoard(@PathVariable Long boardId, @RequestBody LikeRequestDto dto) {
-        return boardService.likeBoard(boardId, dto.userId());
+    public ResponseEntity<Void> likeBoard(@PathVariable Long boardId, @RequestBody LikeRequestDto dto) {
+        boardService.likeBoard(boardId, dto.userId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{boardId}/unlike")

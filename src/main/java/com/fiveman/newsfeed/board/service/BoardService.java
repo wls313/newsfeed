@@ -2,8 +2,11 @@ package com.fiveman.newsfeed.board.service;
 
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 임포트
+import com.fiveman.newsfeed.common.entity.Like;
+import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.LikeResponseDto;
+import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
@@ -16,6 +19,7 @@ public class BoardService {
 
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
+    private final UserService userService;
 
 
     public Board createBoard(Long id, String title, String contents) {
@@ -45,7 +49,14 @@ public class BoardService {
         boardRepository.deleteById(boardId); // JPA의 기본 deleteById 메서드 사용
     }
 
-    public LikeResponseDto likeBoard(Long boardId, Long userId) { return null; }
+    public void likeBoard(Long boardId, Long userId) {
+        User user = userService.findById(userId);
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
+
+        Like like = new Like(board, user);
+
+        likeRepository.save(like);
+    }
 
     public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
         return null;
