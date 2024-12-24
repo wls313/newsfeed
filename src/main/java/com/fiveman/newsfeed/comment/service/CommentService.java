@@ -6,12 +6,14 @@ import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
 import com.fiveman.newsfeed.comment.repository.CommentRepository;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.common.entity.Comment;
+import com.fiveman.newsfeed.common.entity.Like;
 import com.fiveman.newsfeed.common.entity.User;
+import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.user.repository.UserRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -24,8 +26,9 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
+    private final LikeRepository likeRepository;
 
-        public List<CommentResponseDto> findByAllComment(CommentServiceRequestDto commentServiceRequestDto){
+    public List<CommentResponseDto> findByAllComment(CommentServiceRequestDto commentServiceRequestDto){
         return CommentResponseDto.of(commentRepository.findAll());
     }
 
@@ -69,4 +72,32 @@ public class CommentService {
 
     }
 
+    @Transactional
+    public void likeComment(Long boardId, Long commentId, Long userId) {
+            Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
+            User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+
+
+            Like like = new Like(comment, user);
+
+            if(likeRepository.existsById(like.getLikeId())) {
+                throw new IllegalArgumentException();
+            }
+
+            likeRepository.save(like);
+            comment.like(user);
     }
+
+    @Transactional
+    public void unlikeComment(Long boardId, Long commentId, Long userId) {
+        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+        Like like = new Like(comment, user);
+
+        if(likeRepository.existsById(like.getLikeId())) {
+            likeRepository.deleteById(like.getLikeId());
+            comment.unlike(user);
+        }
+
+    }
+}

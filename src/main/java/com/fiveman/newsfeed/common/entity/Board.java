@@ -19,6 +19,8 @@ public class Board extends BaseEntity {
     private String title;
     private String content;
 
+    private Integer likeCount = 0;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -32,4 +34,13 @@ public class Board extends BaseEntity {
         this.title = title;
         this.content = content;
     }
+
+    public void like(User user) {
+        likeCount++;
+    }
+
+    public void unlike(User user) {
+        likeCount--;
+    }
+
 }

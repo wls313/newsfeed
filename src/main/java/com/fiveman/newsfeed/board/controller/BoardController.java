@@ -3,6 +3,9 @@ package com.fiveman.newsfeed.board.controller;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.dto.BoardRequestDto;
 import com.fiveman.newsfeed.board.service.BoardService;
+import com.fiveman.newsfeed.like.LikeRequestDto;
+import com.fiveman.newsfeed.like.LikeResponseDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,6 +43,18 @@ public class BoardController {
     public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.noContent().build(); // 204 No Content 응답
+    }
+
+    @PostMapping("/{boardId}/like")
+    public ResponseEntity<Void> likeBoard(@PathVariable Long boardId, @RequestBody LikeRequestDto dto) {
+        boardService.likeBoard(boardId, dto.userId());
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{boardId}/unlike")
+    public ResponseEntity<Void> unlikeBoard(@PathVariable Long boardId, @RequestBody LikeRequestDto dto) {
+        boardService.unlikeBoard(boardId, dto.userId());
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
