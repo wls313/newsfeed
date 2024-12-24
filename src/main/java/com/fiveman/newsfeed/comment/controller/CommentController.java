@@ -5,6 +5,7 @@ import com.fiveman.newsfeed.comment.dto.CommentResponseDto;
 import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
 import com.fiveman.newsfeed.comment.service.CommentService;
 import com.fiveman.newsfeed.like.dto.LikeCommentRequestDto;
+import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -78,15 +79,13 @@ public class CommentController {
     }
 
     @PostMapping("/{boardId}/comments/like")
-    public ResponseEntity<Void> likeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        commentService.likeComment(boardId, dto.commentId(), dto.userId());
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
+        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}/comments/unlike")
-    public ResponseEntity<Void> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        commentService.unlikeComment(boardId, dto.commentId(), dto.userId());
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
+        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
     }
 
 

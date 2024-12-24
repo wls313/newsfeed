@@ -5,6 +5,7 @@ import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 
 import com.fiveman.newsfeed.common.entity.Like;
 import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
+import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -50,7 +51,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void likeBoard(Long boardId, Long userId) {
+    public LikeResponseDto likeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
 
@@ -63,10 +64,11 @@ public class BoardService {
         likeRepository.save(like);
         board.like(user);
 
+        return new LikeResponseDto("게시글 좋아요에 성공했습니다", board.getLikeCount());
     }
 
     @Transactional
-    public void unlikeBoard(Long boardId, Long userId) {
+    public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
         Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
 
@@ -80,5 +82,6 @@ public class BoardService {
             throw new IllegalArgumentException();
         }
 
+        return new LikeResponseDto("게시글 좋아요를 취소했습니다", board.getLikeCount());
     }
 }
