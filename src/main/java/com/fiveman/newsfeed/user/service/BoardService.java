@@ -3,8 +3,7 @@ package com.fiveman.newsfeed.user.service;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.common.entity.User;  // User 클래스 임포트
 import com.fiveman.newsfeed.user.dto.BoardRequestDto;
-import com.fiveman.newsfeed.user.repository.BoardRepository;
-import com.fiveman.newsfeed.user.repository.UserRepository;  // UserRepository 임포트
+import com.fiveman.newsfeed.user.repository.BoardRepository; // UserRepository 임포트
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
@@ -17,7 +16,7 @@ import java.util.Optional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;  // UserRepository 의존성 추가
+
 
 
     public Board createBoard(Long id, String title, String contents) {
