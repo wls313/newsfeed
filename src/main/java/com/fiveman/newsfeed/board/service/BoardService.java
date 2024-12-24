@@ -5,7 +5,6 @@ import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 
 import com.fiveman.newsfeed.common.entity.Like;
 import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
-import com.fiveman.newsfeed.like.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

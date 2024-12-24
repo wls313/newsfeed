@@ -36,6 +36,10 @@ public class Board extends BaseEntity {
     }
 
     public void like(User user) {
+        if(this.user.getUserId() == user.getUserId()) {
+            throw new IllegalArgumentException("본인 글은 좋아요를 누를 수 없습니다.");
+        }
+
         likeCount++;
     }
 
