@@ -47,4 +47,26 @@ public class FriendController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @PatchMapping("/requests/{fromUserId}")
+    public ResponseEntity<Void> acceptFriendRequest(
+            @PathVariable Long fromUserId,
+            @RequestParam Long myId) {
+
+        friendService.acceptFriendRequest(fromUserId, myId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/requests/{fromUserId}")
+    public ResponseEntity<Void> deleteFriendRequest(
+            @PathVariable Long fromUserId,
+            @RequestParam Long myId) {
+
+        friendService.deleteFriendRequest(fromUserId, myId);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
 }
