@@ -43,8 +43,6 @@ public class AuthService {
         SecurityContextHolder.clearContext();
     }
 
-
-
     public Long getLoginUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Long)
