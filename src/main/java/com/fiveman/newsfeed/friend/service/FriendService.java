@@ -6,6 +6,7 @@ import com.fiveman.newsfeed.friend.dto.FriendListResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendRequestDto;
 import com.fiveman.newsfeed.friend.repository.FriendRepository;
+import com.fiveman.newsfeed.user.repository.UserRepository;
 import com.fiveman.newsfeed.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class FriendService {
         User toUser = userService.findById(request.toUserId());
 
         // 정적 팩토리 메서드를 이용해 Friend 객체 생성 후 DB 저장
-        friendRepository.save(Friend.of(fromUser, toUser));
+        friendRepository.save(Friend.of(fromUser, toUser, "PENDING"));
     }
 
     public List<FriendResponseDto> findAllRequest(Long myId) {
@@ -50,5 +51,23 @@ public class FriendService {
     public void deleteFriend(Long fromUser, Long toUser) {
 
         friendRepository.deleteFriendByFromUserToUser(fromUser,toUser);
+    }
+
+    @Transactional
+    public void acceptFriendRequest(Long fromUserId, Long myId) {
+
+        User fromUser = userService.findById(fromUserId);
+        User toUser = userService.findById(myId);
+        
+        Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
+        friend.setStatus("ACCEPTED");
+        
+        friendRepository.save(Friend.of(toUser, fromUser, "ACCEPTED"));
+    }
+
+    @Transactional
+    public void deleteFriendRequest(Long fromUserId, Long myId) {
+
+        friendRepository.deleteFriendByFromUserToUser(fromUserId, myId);
     }
 }
