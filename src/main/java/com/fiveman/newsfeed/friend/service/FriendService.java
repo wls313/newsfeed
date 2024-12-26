@@ -29,12 +29,15 @@ public class FriendService {
         isValidSelf(fromUserId, toUserId);
 
         List<Friend> friendPending = friendRepository.findByStatusIsPendingAndFromUserId(fromUserId,toUserId);
+        List<Friend> friendPendingReverse = friendRepository.findByStatusIsPendingAndFromUserId(toUserId,fromUserId);
         List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
 
         if(!friendAccept.isEmpty()) {
-            throw new RuntimeException("이미 친구입니다.");
+            throw new IllegalArgumentException("이미 친구입니다.");
         } else if (!friendPending.isEmpty()) {
-            throw new RuntimeException("이미 보내진 요청입니다");
+            throw new IllegalArgumentException("이미 보내진 요청입니다");
+        } else if (!friendPendingReverse.isEmpty()) {
+            throw new IllegalArgumentException("이미 상대방이 친구 요청을 보냈습니다");
         }
 
         User fromUser = userService.findById(fromUserId);
