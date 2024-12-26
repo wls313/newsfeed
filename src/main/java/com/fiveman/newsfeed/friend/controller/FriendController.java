@@ -50,7 +50,7 @@ public class FriendController {
         return new ResponseEntity<>(friendListResponseDto,HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{toUserId}")
+    @DeleteMapping("/{toUserId}")
     public ResponseEntity<Void> deleteFriend(@PathVariable Long toUserId){
 
         Long loginUserId = authService.getLoginUserId();
