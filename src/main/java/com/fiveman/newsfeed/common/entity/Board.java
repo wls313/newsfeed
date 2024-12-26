@@ -25,15 +25,17 @@ public class Board extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Board(String title, String content) {
+    public Board(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     public void updateBoard(String title, String content) {
         this.title = title;
         this.content = content;
     }
+
 
     public void like(User user) {
         if(this.user.getUserId() == user.getUserId()) {

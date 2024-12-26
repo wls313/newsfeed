@@ -74,12 +74,16 @@ public class CommentController {
 
     @PostMapping("/{boardId}/comments/like")
     public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+        Long myId = authService.getLoginUserId();
+
+        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}/comments/unlike")
     public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+        Long myId = authService.getLoginUserId();
+
+        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
     }
 
 
