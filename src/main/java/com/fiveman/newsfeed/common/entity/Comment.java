@@ -3,6 +3,8 @@ package com.fiveman.newsfeed.common.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Getter
@@ -20,6 +22,7 @@ public class Comment extends BaseEntity {
     private User user;
 
     @JoinColumn(name = "board_id",nullable=false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne
     private Board board;
 

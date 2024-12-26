@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.comment.controller;
 
+import com.fiveman.newsfeed.auth.service.AuthService;
 import com.fiveman.newsfeed.comment.dto.*;
 import com.fiveman.newsfeed.comment.service.CommentService;
 import com.fiveman.newsfeed.like.dto.LikeCommentRequestDto;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/boards")
 @RestController
 public class CommentController {
+    private final AuthService authService;
     private final CommentService commentService;
 
     @GetMapping("/{boardId}/comments")
@@ -33,7 +35,7 @@ public class CommentController {
         return new ResponseEntity<>(commentService.createCommentByboardId(
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        commentRequestDto.getUserId(),
+                        authService.getLoginUserId(),
                         boardId,
                         commentRequestDto.getContent())),
                 //생성된 값이 반환되면 httpstatus값으로 201 created를 반환합니다.
@@ -48,7 +50,7 @@ public class CommentController {
 
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        commentRequestDto.getUserId(),
+                        authService.getLoginUserId(),
                         boardId,
                         commentRequestDto.getCommentId(),
                         commentRequestDto.getContent())),
@@ -61,7 +63,7 @@ public class CommentController {
 
 
         commentService.deleteCommentByboardId( new CommentServiceRequestDto(
-                commentRequestDto.getUserId(),
+                authService.getLoginUserId(),
                 boardId,
                 commentRequestDto.getCommentId())); //덧글 서비스 리퀘스트 dto를 생성합니다.
 
