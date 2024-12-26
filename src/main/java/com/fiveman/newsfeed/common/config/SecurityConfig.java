@@ -27,7 +27,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/signup",
                                 "/api/login",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**").permitAll() // 인증 없이 허용
+                                "/v3/api-docs/**",
+                                "/error").permitAll() // 인증 없이 허용
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
