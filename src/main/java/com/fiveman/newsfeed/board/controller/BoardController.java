@@ -32,8 +32,9 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getBoards(@PageableDefault(size = 10) Pageable pageable,
-                                                            @RequestParam(required = false) String title) {
-        return ResponseEntity.ok(boardService.getBoards(pageable, title));
+                                                            @RequestParam(required = false) String title,
+                                                            @RequestParam(required = false) String sort) {
+        return ResponseEntity.ok(boardService.getBoards(pageable, title, sort));
     }
 
     @PatchMapping("/{boardId}")
