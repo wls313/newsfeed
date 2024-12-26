@@ -80,11 +80,11 @@ public class CommentController {
         return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{boardId}/comments/unlike")
-    public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
+    @DeleteMapping("/{boardId}/comments/{commentId}/unlike")
+    public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @PathVariable Long commentId) {
         Long myId = authService.getLoginUserId();
 
-        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
+        return new ResponseEntity<>(commentService.unlikeComment(boardId, commentId, myId), HttpStatus.OK);
     }
 
 
