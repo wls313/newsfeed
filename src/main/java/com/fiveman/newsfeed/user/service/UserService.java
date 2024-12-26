@@ -51,11 +51,17 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String email, String username, short age) {
+    public void updateUser(String email,String username, Short age) {
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        user.updateUser(username,age);
+        if(username != null && !username.isEmpty()){
+            user.updateUsername(username);
+        }
+
+        if (age != null) {
+            user.updateAge(age);
+        }
     }
 
     @Transactional
@@ -92,7 +98,7 @@ public class UserService {
         if (!newPassword.matches(".*[0-9].*")) {
             throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 숫자를 포함해야 합니다.");
         }
-        if (!newPassword.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*")) {
+        if (!newPassword.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
             throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 특수 문자를 포함해야 합니다.");
         }
     }
