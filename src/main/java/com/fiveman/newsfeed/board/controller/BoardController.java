@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -32,9 +34,12 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getBoards(@PageableDefault(size = 10) Pageable pageable,
+                                                            @RequestParam(required = false) Long userId,
                                                             @RequestParam(required = false) String title,
-                                                            @RequestParam(required = false) String sort) {
-        return ResponseEntity.ok(boardService.getBoards(pageable, title, sort));
+                                                            @RequestParam(required = false) String sort,
+                                                            @RequestParam(required = false) LocalDate startDate,
+                                                            @RequestParam(required = false) LocalDate endDate) {
+        return ResponseEntity.ok(boardService.getBoards(pageable, userId, title, sort, startDate, endDate));
     }
 
     @PatchMapping("/{boardId}")
