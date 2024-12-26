@@ -9,6 +9,7 @@ import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,20 +50,33 @@ public class BoardService {
     }
 
     // 모든 게시물 조회 메서드 추가
-    public Page<BoardResponseDto> getBoards(Pageable pageable, String title, String sort) {
-        Page<BoardResponseDto> BoardList = new PageImpl<>(new ArrayList<>());
+    public Page<BoardResponseDto> getBoards(Pageable pageable,
+                                            Long userId,
+                                            String title,
+                                            String sort,
+                                            LocalDate startDate,
+                                            LocalDate endDate) {
 
-        if(sort !=  null && sort.equals("likeCount")) {
-            BoardList = boardRepository.findByOrderByLikeCountDesc(pageable);
-        } else if (title != null) {
-            BoardList = boardRepository.findByTitle(title, pageable);
-        } else {
-            BoardList = boardRepository.findByOrderByUpdatedAtDesc(pageable);
+        if(userId != null) {
+            return boardRepository.findByUserId(userId, pageable);
         }
 
+        if(startDate != null && endDate != null) {
+            LocalDateTime start = startDate.atStartOfDay();
+            LocalDateTime end = endDate.atTime(LocalTime.MAX);
 
+            return boardRepository.findByperiod(start, end, pageable);
+        }
 
-        return BoardList;
+        if(sort != null && sort.equals("likeCount")) {
+            return boardRepository.findByOrderByLikeCountDesc(pageable);
+        }
+
+        if (title != null) {
+            return boardRepository.findByTitle(title, pageable);
+        }
+
+        return boardRepository.findByOrderByUpdatedAtDesc(pageable);
     }
 
     @Transactional
