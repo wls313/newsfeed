@@ -2,6 +2,9 @@ package com.fiveman.newsfeed.common.entity;
 
 import jakarta.persistence.*; // Spring Boot 3 이상에서는 jakarta.persistence 사용
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fiveman.newsfeed.common.entity.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,14 @@ public class Board extends BaseEntity {
     private String content;
 
     private Integer likeCount = 0;
+
+    @OneToMany(mappedBy = "board",cascade=CascadeType.ALL,orphanRemoval=true)
+    private List<Comment> commentList = new ArrayList<>();
+
+    public void addComment(Comment comment){
+        commentList.add(comment);
+        comment.setBoardId(this);
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")

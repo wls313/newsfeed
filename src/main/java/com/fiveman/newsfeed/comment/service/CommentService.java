@@ -12,9 +12,7 @@ import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.RequiredTypes;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -30,7 +28,9 @@ public class CommentService {
     private final LikeRepository likeRepository;
 
     public List<CommentResponseDto> findByAllComment(CommentServiceRequestDto commentServiceRequestDto) {
-        return CommentResponseDto.of(commentRepository.findAll());
+        Board board = boardRepository.findById(commentServiceRequestDto.getBoardId()).orElseThrow(()
+                -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
+        return CommentResponseDto.of(commentRepository.findByBoard(board));
     }
 
     public CommentResponseDto createCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
@@ -38,7 +38,8 @@ public class CommentService {
                 -> new IllegalArgumentException("유저아이디가 데이터베이스에 없습니다."));
         Board board = boardRepository.findById(commentServiceRequestDto.getBoardId()).orElseThrow(()
                 -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
-        Comment comment = new Comment(user, board, commentServiceRequestDto.getContent());
+        Comment comment = new Comment(user,commentServiceRequestDto.getContent());
+        board.addComment(comment);
         return CommentResponseDto.of(commentRepository.save(comment));
     }
 
@@ -51,7 +52,7 @@ public class CommentService {
             comment.updateContent(commentServiceRequestDto.getContent());
             return CommentResponseDto.of(comment);
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"덧글작성자 본인만 수정이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "덧글작성자 본인만 수정이 가능합니다.");
         }
 
     }
@@ -64,29 +65,29 @@ public class CommentService {
                 -> new IllegalArgumentException("게시글의 작성자가 데이터베이스에 없습니다."));
         Comment comment = commentRepository.findById(commentServiceRequestDto.getCommentId()).orElseThrow(()
                 -> new IllegalArgumentException("덧글이 데이터베이스에 없습니다."));
-        if (boardUser.getUserId()  == commentServiceRequestDto.getUserId() || comment.getUser().getUserId() == commentServiceRequestDto.getUserId()) {
+        if (boardUser.getUserId() == commentServiceRequestDto.getUserId() || comment.getUser().getUserId() == commentServiceRequestDto.getUserId()) {
             commentRepository.deleteById(commentServiceRequestDto.getCommentId());
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"삭제할 권한을 가진 사용자가 아닙니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "삭제할 권한을 가진 사용자가 아닙니다.");
         }
 
     }
 
     @Transactional
     public LikeResponseDto likeComment(Long boardId, Long commentId, Long userId) {
-            Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
-            User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
 
-            Like like = new Like(comment, user);
+        Like like = new Like(comment, user);
 
         if (likeRepository.existsById(like.getLikeId())) {
             throw new IllegalArgumentException();
         }
 
-            likeRepository.save(like);
-            comment.like(user);
+        likeRepository.save(like);
+        comment.like(user);
 
-            return new LikeResponseDto("댓글 좋아요에 성공했습니다", comment.getLikeCount());
+        return new LikeResponseDto("댓글 좋아요에 성공했습니다", comment.getLikeCount());
     }
 
     @Transactional
