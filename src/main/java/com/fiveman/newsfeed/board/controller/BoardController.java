@@ -34,12 +34,13 @@ public class BoardController {
 
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getBoards(@PageableDefault(size = 10) Pageable pageable,
+                                                            @RequestParam(required = false) Long myId,
                                                             @RequestParam(required = false) Long userId,
                                                             @RequestParam(required = false) String title,
                                                             @RequestParam(required = false) String sort,
                                                             @RequestParam(required = false) LocalDate startDate,
                                                             @RequestParam(required = false) LocalDate endDate) {
-        return ResponseEntity.ok(boardService.getBoards(pageable, userId, title, sort, startDate, endDate));
+        return ResponseEntity.ok(boardService.getBoards(pageable, myId, userId, title, sort, startDate, endDate));
     }
 
     @PatchMapping("/{boardId}")
