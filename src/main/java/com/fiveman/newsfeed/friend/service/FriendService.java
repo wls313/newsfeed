@@ -10,9 +10,13 @@ import com.fiveman.newsfeed.user.repository.UserRepository;
 import com.fiveman.newsfeed.user.service.UserService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,18 +52,22 @@ public class FriendService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteFriend(Long fromUser, Long toUser) {
+    public void deleteFriend(Long fromUserId, Long toUserId) {
 
-        friendRepository.deleteFriendByFromUserToUser(fromUser,toUser);
-        friendRepository.deleteFriendByFromUserToUser(toUser,fromUser);
+        isValid(fromUserId, toUserId);
+
+        friendRepository.deleteFriendByFromUserToUser(fromUserId,toUserId);
+        friendRepository.deleteFriendByFromUserToUser(toUserId,fromUserId);
 
     }
 
     @Transactional
-    public void acceptFriendRequest(Long fromUserId, Long myId) {
+    public void acceptFriendRequest(Long fromUserId, Long toUserId) {
+
+        isValid(fromUserId, toUserId);
 
         User fromUser = userService.findById(fromUserId);
-        User toUser = userService.findById(myId);
+        User toUser = userService.findById(toUserId);
         
         Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
         friend.setStatus("ACCEPTED");
@@ -68,8 +76,20 @@ public class FriendService {
     }
 
     @Transactional
-    public void deleteFriendRequest(Long fromUserId, Long myId) {
+    public void deleteFriendRequest(Long fromUserId, Long toUserId) {
 
-        friendRepository.deleteFriendByFromUserToUser(fromUserId, myId);
+        isValid(fromUserId, toUserId);
+
+        friendRepository.deleteFriendByFromUserToUser(fromUserId, toUserId);
+    }
+
+    public void isValid(Long fromUserId, Long toUserId) {
+        if(!friendRepository.existsByFromUser_UserIdAndToUser_UserId(fromUserId, toUserId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "찾을 수 없는 요청입니다.");
+        }
+
+        else if(Objects.equals(fromUserId, toUserId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신에게 요청을 보낼 수 없습니다.");
+        }
     }
 }
