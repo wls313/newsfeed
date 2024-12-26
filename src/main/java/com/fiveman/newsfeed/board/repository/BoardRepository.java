@@ -16,32 +16,41 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
-            + "FROM Board b LEFT JOIN b.user u "
+            + "FROM Board b INNER JOIN b.user u "
             + "WHERE b.user.userId = :userId" )
     Page<BoardResponseDto> findByUserId(Long userId, Pageable pageable);
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
-            + "FROM Board b LEFT JOIN b.user u "
+            + "FROM Board b INNER JOIN b.user u "
             + "WHERE b.title = :title" )
     Page<BoardResponseDto> findByTitle(String title, Pageable pageable);
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
-            + "FROM Board b LEFT JOIN b.user u "
+            + "FROM Board b INNER JOIN b.user u "
             + "ORDER BY b.likeCount DESC" )
     Page<BoardResponseDto> findByOrderByLikeCountDesc(Pageable pageable);
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
-            + "FROM Board b LEFT JOIN b.user u "
+            + "FROM Board b INNER JOIN b.user u "
             + "WHERE b.createAt BETWEEN :startDate AND :endDate" )
     Page<BoardResponseDto> findByperiod(LocalDateTime startDate, LocalDateTime endDate, Pageable pageable);
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
-            + "FROM Board b LEFT JOIN b.user u "
+            + "FROM Board b INNER JOIN b.user u "
             + "ORDER BY b.updatedAt DESC")
     Page<BoardResponseDto> findByOrderByUpdatedAtDesc(Pageable pageable);
+
+
+    @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
+            + "FROM Board b "
+            + "INNER JOIN b.user u "
+            + "INNER JOIN Friend f ON u.userId=f.toUser.userId "
+            + "WHERE f.fromUser.userId = :myId AND f.status= 'ACCEPTED'"
+            + "ORDER BY b.updatedAt DESC")
+    Page<BoardResponseDto> findByFriends(Long myId, Pageable pageable);
 
 }

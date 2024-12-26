@@ -51,9 +51,10 @@ public class BoardService {
 
     // 모든 게시물 조회 메서드 추가
     public Page<BoardResponseDto> getBoards(Pageable pageable,
+                                            Long myId,
                                             Long userId,
                                             String title,
-                                            String sort,
+                                            String filter,
                                             LocalDate startDate,
                                             LocalDate endDate) {
 
@@ -68,8 +69,8 @@ public class BoardService {
             return boardRepository.findByperiod(start, end, pageable);
         }
 
-        if(sort != null) {
-            return sortSearchBoard(sort, pageable);
+        if(filter != null) {
+            return sortSearchBoard(filter, myId, pageable);
         }
 
         if (title != null) {
@@ -79,14 +80,19 @@ public class BoardService {
         return boardRepository.findByOrderByUpdatedAtDesc(pageable);
     }
 
-    public Page<BoardResponseDto> sortSearchBoard(String sort, Pageable pageable) {
-        if(sort.equals("likeCount")) {
-            return boardRepository.findByOrderByLikeCountDesc(pageable);
+    public Page<BoardResponseDto> sortSearchBoard(String filter, Long id, Pageable pageable) {
+        Page<BoardResponseDto> boardList = new PageImpl<>(new ArrayList<>());
+
+        if(filter.equals("likeCount")) {
+            boardList = boardRepository.findByOrderByLikeCountDesc(pageable);
         }
-        return boardRepository.findByOrderByLikeCountDesc(pageable);
-//        if(sort.equals("friend")) {
-//
-//        }
+
+        if(filter.equals("friend")) {
+            boardList = boardRepository.findByFriends(id, pageable);
+        }
+
+        return boardList;
+
     }
 
     @Transactional
