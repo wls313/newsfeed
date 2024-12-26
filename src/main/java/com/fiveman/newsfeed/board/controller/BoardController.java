@@ -14,8 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/boards")
@@ -37,10 +36,10 @@ public class BoardController {
                                                             @RequestParam(required = false) Long myId,
                                                             @RequestParam(required = false) Long userId,
                                                             @RequestParam(required = false) String title,
-                                                            @RequestParam(required = false) String sort,
+                                                            @RequestParam(required = false) String filter,
                                                             @RequestParam(required = false) LocalDate startDate,
                                                             @RequestParam(required = false) LocalDate endDate) {
-        return ResponseEntity.ok(boardService.getBoards(pageable, myId, userId, title, sort, startDate, endDate));
+        return ResponseEntity.ok(boardService.getBoards(pageable, myId, userId, title, filter, startDate, endDate));
     }
 
     @PatchMapping("/{boardId}")

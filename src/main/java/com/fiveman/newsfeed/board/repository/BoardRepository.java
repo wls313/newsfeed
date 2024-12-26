@@ -49,7 +49,8 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             + "FROM Board b "
             + "INNER JOIN b.user u "
             + "INNER JOIN Friend f ON u.userId=f.toUser.userId "
-            + "WHERE f.fromUser.userId = :myId AND f.status= 'ACCEPTED'" )
+            + "WHERE f.fromUser.userId = :myId AND f.status= 'ACCEPTED'"
+            + "ORDER BY b.updatedAt DESC")
     Page<BoardResponseDto> findByFriends(Long myId, Pageable pageable);
 
 }
