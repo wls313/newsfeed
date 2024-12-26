@@ -51,11 +51,17 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String email, String username, short age) {
+    public void updateUser(String email,String username, Short age) {
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
-        user.updateUser(username,age);
+        if(username != null && !username.isEmpty()){
+            user.updateUsername(username);
+        }
+
+        if (age != null) {
+            user.updateAge(age);
+        }
     }
 
     @Transactional

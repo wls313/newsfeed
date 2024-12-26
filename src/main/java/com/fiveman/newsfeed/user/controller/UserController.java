@@ -43,7 +43,7 @@ public class UserController {
 
     @PatchMapping("/{email}")
     public ResponseEntity<UserResponseDto> updateUser (@PathVariable String email, @RequestBody UserRequestDto requestDto){
-        userService.updateUser(email, requestDto.getPassword(),requestDto.getAge());
+        userService.updateUser(email,requestDto.getUsername(),requestDto.getAge());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
