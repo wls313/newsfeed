@@ -1,11 +1,14 @@
 package com.fiveman.newsfeed.board.controller;
 
-import com.fiveman.newsfeed.board.dto.CreateBoardResponseDto;
+import com.fiveman.newsfeed.board.dto.BoardResponseDto;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.dto.BoardRequestDto;
 import com.fiveman.newsfeed.board.service.BoardService;
 import com.fiveman.newsfeed.like.dto.LikeBoardRequestDto;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +26,13 @@ public class BoardController {
     }
 
     @PostMapping
-    public ResponseEntity<CreateBoardResponseDto> createBoard(@RequestBody BoardRequestDto dto) {
+    public ResponseEntity<BoardResponseDto> createBoard(@RequestBody BoardRequestDto dto) {
         return new ResponseEntity<>(boardService.createBoard(dto.id(), dto.title(), dto.contents()), HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<List<Board>> getAllBoards() {
-        List<Board> boards = boardService.getAllBoards();
-        return ResponseEntity.ok(boards);
+    public ResponseEntity<Page<BoardResponseDto>> getBoards(@PageableDefault(size = 10) Pageable pageable) {
+        return ResponseEntity.ok(boardService.getBoards(pageable));
     }
 
     @PatchMapping("/{boardId}")
