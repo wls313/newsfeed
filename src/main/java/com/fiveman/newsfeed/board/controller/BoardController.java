@@ -7,6 +7,7 @@ import com.fiveman.newsfeed.board.dto.BoardRequestDto;
 import com.fiveman.newsfeed.board.service.BoardService;
 import com.fiveman.newsfeed.like.dto.LikeBoardRequestDto;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,13 +48,12 @@ public class BoardController {
     }
 
     @PatchMapping("/{boardId}")
-    public ResponseEntity<Board> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto dto) {
-        Board updatedBoard = boardService.updateBoard(boardId, dto.title(), dto.contents());
-        return ResponseEntity.ok(updatedBoard);
+    public ResponseEntity<BoardResponseDto> updateBoard(@PathVariable Long boardId, @RequestBody BoardRequestDto dto) {
+        return ResponseEntity.ok(boardService.updateBoard(boardId, dto.title(), dto.contents()));
     }
 
     @DeleteMapping("/{boardId}")
-    public ResponseEntity<Void> deleteBoard(@PathVariable Long boardId) {
+    public ResponseEntity<Void> deleteBoard(@PathVariable  Long boardId) {
         boardService.deleteBoard(boardId);
         return ResponseEntity.noContent().build(); // 204 No Content 응답
     }

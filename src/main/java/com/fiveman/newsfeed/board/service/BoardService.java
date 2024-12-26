@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.board.service;
 
+import com.fiveman.newsfeed.auth.service.AuthService;
 import com.fiveman.newsfeed.board.dto.BoardResponseDto;
 import com.fiveman.newsfeed.board.repository.BoardRepository;
 import com.fiveman.newsfeed.common.entity.Board;
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +29,7 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final LikeRepository likeRepository;
     private final UserService userService;
+    private final AuthService authService;
 
 
     public BoardResponseDto createBoard(Long id, String title, String contents) {
@@ -86,19 +89,26 @@ public class BoardService {
     }
 
     @Transactional
-    public Board updateBoard(Long boardId, String title, String contents) {
+    public BoardResponseDto updateBoard(Long boardId, String title, String contents) {
         Board board = boardRepository.findById(boardId)
-                .orElseThrow(() -> new IllegalArgumentException("Board not found with ID: " + boardId));
-        board.updateBoard(title, contents); // Board의 메서드를 호출하여 수정
-        return board; // 변경된 엔티티는 JPA의 트랜잭션 관리에 의해 자동 저장
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
+        if(board.getUser().getUserId()==authService.getLoginUserId()) {
+            board.updateBoard(title, contents); // Board의 메서드를 호출하여 수정
+            return new BoardResponseDto(board); // 변경된 엔티티는 JPA의 트랜잭션 관리에 의해 자동 저장
+        }else {
+             throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
     }
 
     @Transactional
     public void deleteBoard(Long boardId) {
-        if (!boardRepository.existsById(boardId)) {
-            throw new IllegalArgumentException("Board not found with ID: " + boardId);
-        }
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
+        if(board.getUser().getUserId()==authService.getLoginUserId()) {
         boardRepository.deleteById(boardId); // JPA의 기본 deleteById 메서드 사용
+    }else {
+            throw new IllegalArgumentException("작성자가 아닙니다.");
+        }
     }
 
     @Transactional
@@ -135,4 +145,5 @@ public class BoardService {
 
         return new LikeResponseDto("게시글 좋아요를 취소했습니다", board.getLikeCount());
     }
-}
+
+    }
