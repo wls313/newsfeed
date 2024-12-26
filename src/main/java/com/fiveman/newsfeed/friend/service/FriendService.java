@@ -26,6 +26,9 @@ public class FriendService {
     @Transactional
     public void create(Long fromUserId, Long toUserId) {
 
+        if(userService.findById(toUserId).isDeleted()) {
+            throw new IllegalArgumentException("삭제된 유저입니다");
+        }
         isValidSelf(fromUserId, toUserId);
 
         List<Friend> friendPending = friendRepository.findByStatusIsPendingAndFromUserId(fromUserId,toUserId);
@@ -71,7 +74,7 @@ public class FriendService {
         List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
 
         if(friendAccept.isEmpty()) {
-            throw new RuntimeException("잘못된 요청입니다.");
+            throw new IllegalArgumentException("잘못된 요청입니다.");
         }
 
         friendRepository.deleteFriendByFromUserToUser(fromUserId,toUserId);
@@ -96,6 +99,15 @@ public class FriendService {
 
     @Transactional
     public void deleteFriendRequest(Long fromUserId, Long toUserId) {
+
+        User fromUser = userService.findById(fromUserId);
+        User toUser = userService.findById(toUserId);
+
+        Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
+
+        if(!friend.getStatus().equals("PENDING")) {
+            throw new IllegalArgumentException("잘못된 요청입니다");
+        }
 
         isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
