@@ -28,14 +28,15 @@ public class AuthService {
 
         User user = userService.findLoginUserByEmail(loginRequest.getEmail());
 
-        if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())
+                && user.getEmail().equals(loginRequest.getEmail())) {
 
             Long userId = user.getUserId(); // DB에서 가져온 userId
             String token = jwtTokenProvider.createToken(loginRequest.getEmail(), userId);
             return new LoginResponseDto(token);
 
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "이메일이나 비밀번호가 일치하지 않습니다.");
         }
     }
 

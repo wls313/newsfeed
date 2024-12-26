@@ -50,12 +50,12 @@ public class FriendController {
         return new ResponseEntity<>(friendListResponseDto,HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteFriend(@RequestBody FriendRequestDto requestDto){
+    @DeleteMapping("/delete/{toUserId}")
+    public ResponseEntity<Void> deleteFriend(@PathVariable Long toUserId){
 
         Long loginUserId = authService.getLoginUserId();
 
-        friendService.deleteFriend(loginUserId, requestDto.toUserId());
+        friendService.deleteFriend(loginUserId, toUserId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
