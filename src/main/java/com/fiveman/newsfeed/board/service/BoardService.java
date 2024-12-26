@@ -46,10 +46,12 @@ public class BoardService {
     }
 
     // 모든 게시물 조회 메서드 추가
-    public Page<BoardResponseDto> getBoards(Pageable pageable, String title) {
+    public Page<BoardResponseDto> getBoards(Pageable pageable, String title, String sort) {
         Page<BoardResponseDto> BoardList = new PageImpl<>(new ArrayList<>());
 
-        if (title != null) {
+        if(sort !=  null && sort.equals("likeCount")) {
+            BoardList = boardRepository.findByOrderByLikeCountDesc(pageable);
+        } else if (title != null) {
             BoardList = boardRepository.findByTitle(title, pageable);
         } else {
             BoardList = boardRepository.findByOrderByUpdatedAtDesc(pageable);
