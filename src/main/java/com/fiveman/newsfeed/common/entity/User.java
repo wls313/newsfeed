@@ -1,6 +1,5 @@
 package com.fiveman.newsfeed.common.entity;
 
-import com.fiveman.newsfeed.user.dto.SignupRequestDto;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
@@ -24,7 +23,7 @@ public class User extends BaseEntity{
     private String password;
 
     @Column(nullable = false)
-    private short age;
+    private Short age;
 
     @ColumnDefault("0")
     @Column(columnDefinition = "boolean", nullable = false)
@@ -34,7 +33,7 @@ public class User extends BaseEntity{
 
     }
 
-    public static User of(String username, String email, String password, short age) {
+    public static User of(String username, String email, String password, Short age) {
         User user = new User();
 
         user.username = username;
@@ -46,8 +45,11 @@ public class User extends BaseEntity{
     }
 
 
-    public void updateUser(String username, short age) {
+    public void updateUsername(String username) {
         this.username = username;
+    }
+
+    public void updateAge(Short age){
         this.age = age;
     }
 
