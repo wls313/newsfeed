@@ -62,11 +62,12 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<UserResponseDto> delete() {
+    @DeleteMapping("/{password}")
+    public ResponseEntity<UserResponseDto> delete(@PathVariable String password) {
+
 
         Long loginId = authService.getLoginUserId();
-        userService.delete(loginId);
+        userService.delete(loginId,password);
         authService.logout();
 
         return new ResponseEntity<>(HttpStatus.OK);

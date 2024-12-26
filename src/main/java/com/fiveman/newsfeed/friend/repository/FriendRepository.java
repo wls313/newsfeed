@@ -23,6 +23,14 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
             "AND f.toUser.isDeleted = false")
     List<Friend> findByFromUser_UserId(Long fromUserId);
 
+    @Query("SELECT f FROM Friend f WHERE f.fromUser.userId = :fromUserId " +
+            "AND f.status = 'ACCEPTED' AND f.toUser.userId = :toUserId")
+    List<Friend> findByStatusIsAcceptedAndFromUserId(Long fromUserId,Long toUserId);
+
+    @Query("SELECT f FROM Friend f WHERE f.fromUser.userId = :fromUserId " +
+            "AND f.status = 'PENDING' AND f.toUser.userId = :toUserId")
+    List<Friend> findByStatusIsPendingAndFromUserId(Long fromUserId,Long toUserId);
+
     @Modifying
     @Transactional
     @Query("DELETE FROM Friend f WHERE f.fromUser.userId = :fromUserId AND f.toUser.userId = :toUserId")
