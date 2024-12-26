@@ -5,12 +5,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 
-@EnableJpaAuditing
 @SpringBootApplication
+@EnableJpaAuditing
 public class NewsfeedApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(NewsfeedApplication.class, args);
     }
+
 
 }

@@ -19,17 +19,34 @@ public class Board extends BaseEntity {
     private String title;
     private String content;
 
+    private Integer likeCount = 0;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Board(String title, String content) {
+    public Board(String title, String content, User user) {
         this.title = title;
         this.content = content;
+        this.user = user;
     }
 
     public void updateBoard(String title, String content) {
         this.title = title;
         this.content = content;
     }
+
+
+    public void like(User user) {
+        if(this.user.getUserId() == user.getUserId()) {
+            throw new IllegalArgumentException("본인 글은 좋아요를 누를 수 없습니다.");
+        }
+
+        likeCount++;
+    }
+
+    public void unlike(User user) {
+        likeCount--;
+    }
+
 }
