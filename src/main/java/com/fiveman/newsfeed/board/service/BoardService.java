@@ -1,6 +1,6 @@
 package com.fiveman.newsfeed.board.service;
 
-import com.fiveman.newsfeed.board.dto.CreateBoardResponseDto;
+import com.fiveman.newsfeed.board.dto.BoardResponseDto;
 import com.fiveman.newsfeed.common.entity.Board;
 import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 임포트
 import com.fiveman.newsfeed.common.entity.Like;
@@ -9,6 +9,8 @@ import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
@@ -24,24 +26,26 @@ public class BoardService {
     private final UserService userService;
 
 
-    public CreateBoardResponseDto createBoard(Long id, String title, String contents) {
+    public BoardResponseDto createBoard(Long id, String title, String contents) {
         User user = userService.findById(id);
 
         // Board 객체 생성
         Board board = new Board(title, contents, user);
 
         boardRepository.save(board);
-        return new CreateBoardResponseDto(board.getBoardId(),
-                                          board.getTitle(),
-                                          board.getContent(),
-                                          board.getLikeCount(),
-                                          board.getUser().getEmail(),
-                                          board.getUser().getUsername());
+        return new BoardResponseDto(board.getBoardId(),
+                                    board.getTitle(),
+                                    board.getContent(),
+                                    board.getLikeCount(),
+                                    board.getCreateAt(),
+                                    board.getUpdatedAt(),
+                                    board.getUser().getEmail(),
+                                    board.getUser().getUsername());
     }
 
     // 모든 게시물 조회 메서드 추가
-    public List<Board> getAllBoards() {
-        return boardRepository.findAll();  // BoardRepository에서 findAll() 메서드를 호출하여 모든 게시물 반환
+    public Page<BoardResponseDto> getBoards(Pageable pageable) {
+        return boardRepository.findByOrderByUpdatedAtDesc(pageable);
     }
 
     @Transactional
