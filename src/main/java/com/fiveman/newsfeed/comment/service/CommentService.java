@@ -46,7 +46,7 @@ public class CommentService {
     public CommentResponseDto updateCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
 
         Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentServiceRequestDto.getCommentId(), commentServiceRequestDto.getBoardId()).orElseThrow(()
-                -> new IllegalArgumentException("덧글고유번호나 게시글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException("덧글이나 게시글이 데이터베이스에 없습니다."));
         if (comment.getUser().getUserId().equals(commentServiceRequestDto.getUserId())) {
             comment.updateContent(commentServiceRequestDto.getContent());
             return CommentResponseDto.of(comment);
