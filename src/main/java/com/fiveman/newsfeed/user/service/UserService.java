@@ -53,6 +53,8 @@ public class UserService {
     @Transactional
     public void updateUser(String email, String username, short age) {
 
+
+        //todo 사용자가 입력하지 않을경우 원래 값을 출력
         User user = userRepository.findByEmailOrElseThrow(email);
 
         user.updateUser(username,age);
@@ -98,6 +100,8 @@ public class UserService {
     }
 
     public void delete(String email) {
+
+        //todo 비밀번호 를 입력받아서 하는거로 변경, email 받을 필요없이 url 로 하는것
 
         User user = userRepository.findByEmailOrElseThrow(email);
 
