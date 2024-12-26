@@ -32,17 +32,19 @@ public class Comment extends BaseEntity {
     @Column(name= "like_count")
     private Integer likeCount = 0;
 
-    public Comment(User user,Board board,String content){
+    public Comment(User user,String content){
         this.user = user;
-        this.board = board;
         this.content = content;
     }
 
     public void updateContent(String content){
         this.content = content;
-
-
     }
+
+    public void setBoardId(Board boardId){
+        this.board = boardId;
+    }
+
     //TODO 덧글 좋아요 개수 카운트를 업데이트 하기 위해 존재합니다.
     public void updateLikeCount(Integer likeCount){
         this.likeCount = likeCount;
