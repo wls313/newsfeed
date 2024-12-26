@@ -3,6 +3,7 @@ package com.fiveman.newsfeed.user.controller;
 
 import com.fiveman.newsfeed.user.dto.*;
 import com.fiveman.newsfeed.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signup")
-    public ResponseEntity<UserDto> create(@RequestBody SignupRequestDto requestDto) {
+    public ResponseEntity<UserDto> create(@Valid @RequestBody SignupRequestDto requestDto) {
 
         UserDto response = userService.createUser(requestDto);
 
