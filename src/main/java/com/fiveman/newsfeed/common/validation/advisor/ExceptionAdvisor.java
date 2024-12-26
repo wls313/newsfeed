@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.common.validation.advisor;
 import com.fiveman.newsfeed.common.validation.dto.ErrorResponseDto;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,16 @@ public class ExceptionAdvisor {
     public ResponseEntity<ErrorResponseDto> argumentExceptionHandler(IllegalArgumentException exception ){
 
         return new ResponseEntity<>(new ErrorResponseDto(HttpStatus.BAD_REQUEST.toString(),exception.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<List<ErrorResponseDto>> constraintViolationHandler(ConstraintViolationException exception) {
+        List<ErrorResponseDto> errors = new ArrayList<>();
+
+        exception.getConstraintViolations().forEach(violation ->
+                errors.add(new ErrorResponseDto(HttpStatus.BAD_REQUEST.toString(), violation.getMessage())));
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     // TODO ResponseStatusExcepion을 반환받은 Status_Code로 반환합니다.
