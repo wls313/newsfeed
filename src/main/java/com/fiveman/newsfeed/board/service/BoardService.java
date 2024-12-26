@@ -1,27 +1,24 @@
 package com.fiveman.newsfeed.board.service;
 
 import com.fiveman.newsfeed.board.dto.BoardResponseDto;
+import com.fiveman.newsfeed.board.repository.BoardRepository;
 import com.fiveman.newsfeed.common.entity.Board;
-import com.fiveman.newsfeed.board.repository.BoardRepository; // UserRepository 임포트
 import com.fiveman.newsfeed.common.entity.Like;
 import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
