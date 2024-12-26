@@ -51,7 +51,7 @@ public class CommentService {
             comment.updateContent(commentServiceRequestDto.getContent());
             return CommentResponseDto.of(comment);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"덧글작성자 본인만 수정이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"덧글작성자 본인만 수정이 가능합니다.");
         }
 
     }
