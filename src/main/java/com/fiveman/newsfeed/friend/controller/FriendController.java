@@ -1,5 +1,6 @@
 package com.fiveman.newsfeed.friend.controller;
 
+import com.fiveman.newsfeed.auth.service.AuthService;
 import com.fiveman.newsfeed.friend.dto.FriendListResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendResponseDto;
 import com.fiveman.newsfeed.friend.dto.FriendRequestDto;
@@ -17,53 +18,65 @@ import java.util.List;
 public class FriendController {
 
     private final FriendService friendService;
+    private final AuthService authService;
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody FriendRequestDto request) {
 
-        friendService.create(request);
+        Long loginUserId = authService.getLoginUserId();
+
+        friendService.create(loginUserId, request);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @GetMapping("/requests")
-    public ResponseEntity<List<FriendResponseDto>> findAllRequests(@RequestParam Long myId) {
+    public ResponseEntity<List<FriendResponseDto>> findAllRequests() {
 
-        List<FriendResponseDto> response = friendService.findAllRequest(myId);
+        Long loginUserId = authService.getLoginUserId();
+
+        List<FriendResponseDto> response = friendService.findAllRequest(loginUserId);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/friendsList/{fromUserId}")
-    public ResponseEntity<List<FriendListResponseDto>> findAllFriends(@PathVariable Long fromUserId){
-        List<FriendListResponseDto> friendListResponseDtos = friendService.findAllFriends(fromUserId);
+    @GetMapping("/friendsList")
+    public ResponseEntity<List<FriendListResponseDto>> findAllFriends(){
 
-        return new ResponseEntity<>(friendListResponseDtos,HttpStatus.OK);
+        Long loginUserId = authService.getLoginUserId();
+
+        List<FriendListResponseDto> friendListResponseDto = friendService.findAllFriends(loginUserId);
+
+        return new ResponseEntity<>(friendListResponseDto,HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> delete(@RequestBody FriendRequestDto requestDto){
-        friendService.deleteFriend(requestDto.fromUserId(), requestDto.toUserId());
+    public ResponseEntity<Void> deleteFriend(@RequestBody FriendRequestDto requestDto){
+
+        Long loginUserId = authService.getLoginUserId();
+
+        friendService.deleteFriend(loginUserId, requestDto.toUserId());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PatchMapping("/requests/{fromUserId}")
-    public ResponseEntity<Void> acceptFriendRequest(
-            @PathVariable Long fromUserId,
-            @RequestParam Long myId) {
+    public ResponseEntity<Void> acceptFriendRequest(@PathVariable Long fromUserId) {
 
-        friendService.acceptFriendRequest(fromUserId, myId);
+        Long loginUserId = authService.getLoginUserId();
+
+        friendService.acceptFriendRequest(fromUserId, loginUserId);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @DeleteMapping("/requests/{fromUserId}")
     public ResponseEntity<Void> deleteFriendRequest(
-            @PathVariable Long fromUserId,
-            @RequestParam Long myId) {
+            @PathVariable Long fromUserId) {
 
-        friendService.deleteFriendRequest(fromUserId, myId);
+        Long loginUserId = authService.getLoginUserId();
+
+        friendService.deleteFriendRequest(fromUserId, loginUserId);
 
         return new ResponseEntity<>(HttpStatus.OK);
 

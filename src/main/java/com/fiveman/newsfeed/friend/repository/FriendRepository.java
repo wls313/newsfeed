@@ -13,9 +13,14 @@ import java.util.List;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    @Query("SELECT f FROM Friend f WHERE f.toUser.userId = :toUserId")
+    @Query("SELECT f FROM Friend f WHERE f.toUser.userId = :toUserId " +
+            "AND f.status = 'PENDING' " +
+            "AND f.fromUser.isDeleted = false")
     List<Friend> findAllRequest(@Param("toUserId") Long toUserId);
 
+    @Query("SELECT f FROM Friend f WHERE f.fromUser.userId = :fromUserId " +
+            "AND f.status = 'ACCEPTED' " +
+            "AND f.toUser.isDeleted = false")
     List<Friend> findByFromUser_UserId(Long fromUserId);
 
     @Modifying
