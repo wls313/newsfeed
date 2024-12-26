@@ -10,11 +10,13 @@ import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // 추가된 임포트
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -44,8 +46,18 @@ public class BoardService {
     }
 
     // 모든 게시물 조회 메서드 추가
-    public Page<BoardResponseDto> getBoards(Pageable pageable) {
-        return boardRepository.findByOrderByUpdatedAtDesc(pageable);
+    public Page<BoardResponseDto> getBoards(Pageable pageable, String title) {
+        Page<BoardResponseDto> BoardList = new PageImpl<>(new ArrayList<>());
+
+        if (title != null) {
+            BoardList = boardRepository.findByTitle(title, pageable);
+        } else {
+            BoardList = boardRepository.findByOrderByUpdatedAtDesc(pageable);
+        }
+
+
+
+        return BoardList;
     }
 
     @Transactional
