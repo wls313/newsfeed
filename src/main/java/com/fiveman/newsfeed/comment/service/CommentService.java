@@ -35,9 +35,9 @@ public class CommentService {
 
     public CommentResponseDto createCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
         User user = userRepository.findById(commentServiceRequestDto.getUserId()).orElseThrow(()
-                -> new IllegalArgumentException("유저아이디가 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         Board board = boardRepository.findById(commentServiceRequestDto.getBoardId()).orElseThrow(()
-                -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         Comment comment = new Comment(user, board, commentServiceRequestDto.getContent());
         return CommentResponseDto.of(commentRepository.save(comment));
     }
@@ -46,28 +46,29 @@ public class CommentService {
     public CommentResponseDto updateCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
 
         Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentServiceRequestDto.getCommentId(), commentServiceRequestDto.getBoardId()).orElseThrow(()
-                -> new IllegalArgumentException("덧글고유번호나 게시글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         if (comment.getUser().getUserId().equals(commentServiceRequestDto.getUserId())) {
             comment.updateContent(commentServiceRequestDto.getContent());
             return CommentResponseDto.of(comment);
         } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"덧글작성자 본인만 수정이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
     }
 
-    public void deleteCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
+    public boolean deleteCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
 
         Board board = boardRepository.findById(commentServiceRequestDto.getBoardId()).orElseThrow(()
-                -> new IllegalArgumentException("게시글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         User boardUser = userRepository.findById(board.getUser().getUserId()).orElseThrow(()
-                -> new IllegalArgumentException("게시글의 작성자가 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         Comment comment = commentRepository.findById(commentServiceRequestDto.getCommentId()).orElseThrow(()
-                -> new IllegalArgumentException("덧글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException());
         if (boardUser.getUserId()  == commentServiceRequestDto.getUserId() || comment.getUser().getUserId() == commentServiceRequestDto.getUserId()) {
             commentRepository.deleteById(commentServiceRequestDto.getCommentId());
+            return true;
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"삭제할 권한을 가진 사용자가 아닙니다.");
+            return false;
         }
 
     }

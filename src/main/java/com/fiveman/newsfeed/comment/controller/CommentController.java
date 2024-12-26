@@ -1,10 +1,13 @@
 package com.fiveman.newsfeed.comment.controller;
 
-import com.fiveman.newsfeed.comment.dto.*;
+import com.fiveman.newsfeed.comment.dto.CommentRequestDto;
+import com.fiveman.newsfeed.comment.dto.CommentResponseDto;
+import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
 import com.fiveman.newsfeed.comment.service.CommentService;
 import com.fiveman.newsfeed.like.dto.LikeCommentRequestDto;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +30,7 @@ public class CommentController {
     }
 
     @PostMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid CreateCommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
 
 
         return new ResponseEntity<>(commentService.createCommentByboardId(
@@ -41,7 +44,7 @@ public class CommentController {
     }
 
     @PatchMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid UpdateCommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
 
 
         return new ResponseEntity<>(commentService.updateCommentByboardId(
@@ -57,16 +60,19 @@ public class CommentController {
     }
 
     @DeleteMapping("/{boardId}/comments")
-    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid DeleteCommentRequestDto commentRequestDto) {
+    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto) {
 
 
-        commentService.deleteCommentByboardId( new CommentServiceRequestDto(
-                commentRequestDto.getUserId(),
-                boardId,
-                commentRequestDto.getCommentId())); //덧글 서비스 리퀘스트 dto를 생성합니다.
-
+        boolean deleteResult = commentService.deleteCommentByboardId( //덧글 서비스 리퀘스트 dto를 생성합니다.
+                new CommentServiceRequestDto(
+                        commentRequestDto.getUserId(),
+                        boardId,
+                        commentRequestDto.getCommentId()));
+        if (deleteResult) {
             return new ResponseEntity<>(HttpStatus.OK);
-
+        } else {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
     }
 
@@ -79,6 +85,7 @@ public class CommentController {
     public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
         return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
     }
+
 
 
 }
