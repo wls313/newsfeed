@@ -104,12 +104,12 @@ public class BoardService {
     @Transactional
     public LikeResponseDto likeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
 
         Like like = new Like(board, user);
 
         if(likeRepository.existsById(like.getLikeId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("좋아요는 한번만 누를 수 있습니다.");
         }
 
         likeRepository.save(like);
@@ -121,7 +121,7 @@ public class BoardService {
     @Transactional
     public LikeResponseDto unlikeBoard(Long boardId, Long userId) {
         User user = userService.findById(userId);
-        Board board = boardRepository.findById(boardId).orElseThrow(() -> new IllegalArgumentException());
+        Board board = boardRepository.findByIdOrElseThrow(boardId);
 
         Like like = new Like(board, user);
 
@@ -130,7 +130,7 @@ public class BoardService {
             likeRepository.deleteById(like.getLikeId());
             board.unlike(user);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("좋아요를 누르지 않은 게시물입니다.");
         }
 
         return new LikeResponseDto("게시글 좋아요를 취소했습니다", board.getLikeCount());

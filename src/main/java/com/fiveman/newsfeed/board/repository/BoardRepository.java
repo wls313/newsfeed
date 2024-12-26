@@ -11,8 +11,13 @@ import org.springframework.data.repository.query.Param;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public interface BoardRepository extends JpaRepository<Board, Long> {
+
+    default Board findByIdOrElseThrow(Long id) {
+        return findById(id).orElseThrow(() -> new NoSuchElementException("존재하지 않는 게시물입니다."));
+    }
 
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
@@ -23,7 +28,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     @Query(value = "SELECT new com.fiveman.newsfeed.board.dto.BoardResponseDto(b.boardId, b.title, b.content, b.likeCount, b.createAt, b.updatedAt, u.email, u.username) "
             + "FROM Board b INNER JOIN b.user u "
-            + "WHERE b.title = :title" )
+            + "WHERE b.title like concat('%', :title , '%')" )
     Page<BoardResponseDto> findByTitle(String title, Pageable pageable);
 
 
