@@ -39,6 +39,13 @@ public class BoardService {
         return new BoardResponseDto(board);
     }
 
+    public BoardResponseDto getBoard(Long boardId) {
+        Board board = boardRepository.findById(boardId)
+                .orElseThrow(() -> new IllegalArgumentException("Board not found with ID: " + boardId));
+
+        return new BoardResponseDto(board);
+    }
+
     // 모든 게시물 조회 메서드 추가
     public Page<BoardResponseDto> getBoards(Pageable pageable,
                                             Long myId,
@@ -135,4 +142,6 @@ public class BoardService {
 
         return new LikeResponseDto("게시글 좋아요를 취소했습니다", board.getLikeCount());
     }
+
+
 }
