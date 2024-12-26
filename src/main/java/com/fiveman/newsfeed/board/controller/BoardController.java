@@ -59,14 +59,17 @@ public class BoardController {
     }
 
     @PostMapping("/{boardId}/like")
-    public ResponseEntity<LikeResponseDto> likeBoard(@PathVariable Long boardId, @RequestBody LikeBoardRequestDto dto) {
-        return new ResponseEntity<>(boardService.likeBoard(boardId, dto.userId()), HttpStatus.OK);
+    public ResponseEntity<LikeResponseDto> likeBoard(@PathVariable Long boardId) {
+        Long myId = authService.getLoginUserId();
+
+        return new ResponseEntity<>(boardService.likeBoard(boardId, myId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}/unlike")
-    public ResponseEntity<LikeResponseDto> unlikeBoard(@PathVariable Long boardId, @RequestBody LikeBoardRequestDto dto) {
+    public ResponseEntity<LikeResponseDto> unlikeBoard(@PathVariable Long boardId) {
+        Long myId = authService.getLoginUserId();
 
-        return new ResponseEntity<>(boardService.unlikeBoard(boardId, dto.userId()), HttpStatus.OK);
+        return new ResponseEntity<>(boardService.unlikeBoard(boardId, myId), HttpStatus.OK);
     }
 
 }
