@@ -1,11 +1,11 @@
 package com.fiveman.newsfeed.comment.controller;
 
-import com.fiveman.newsfeed.comment.dto.CommentRequestDto;
-import com.fiveman.newsfeed.comment.dto.CommentResponseDto;
-import com.fiveman.newsfeed.comment.dto.CommentServiceRequestDto;
+import com.fiveman.newsfeed.auth.service.AuthService;
+import com.fiveman.newsfeed.comment.dto.*;
 import com.fiveman.newsfeed.comment.service.CommentService;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import com.fiveman.newsfeed.like.dto.LikeCommentRequestDto;
+import com.fiveman.newsfeed.like.dto.LikeResponseDto;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/boards")
 @RestController
 public class CommentController {
+    private final AuthService authService;
     private final CommentService commentService;
 
     @GetMapping("/{boardId}/comments")
@@ -28,14 +29,13 @@ public class CommentController {
     }
 
     @PostMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
+    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid CreateCommentRequestDto commentRequestDto) {
 
-        HttpSession session = request.getSession(false);
 
         return new ResponseEntity<>(commentService.createCommentByboardId(
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userId"),
+                        authService.getLoginUserId(),
                         boardId,
                         commentRequestDto.getContent())),
                 //생성된 값이 반환되면 httpstatus값으로 201 created를 반환합니다.
@@ -43,15 +43,14 @@ public class CommentController {
     }
 
     @PatchMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
+    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid UpdateCommentRequestDto commentRequestDto) {
 
-        HttpSession session = request.getSession(false);
 
         return new ResponseEntity<>(commentService.updateCommentByboardId(
 
                 //덧글 서비스 리퀘스트 dto를 생성합니다.
                 new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userId"),
+                        authService.getLoginUserId(),
                         boardId,
                         commentRequestDto.getCommentId(),
                         commentRequestDto.getContent())),
@@ -60,22 +59,28 @@ public class CommentController {
     }
 
     @DeleteMapping("/{boardId}/comments")
-    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable Long boardId, @RequestBody CommentRequestDto commentRequestDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid DeleteCommentRequestDto commentRequestDto) {
 
-        boolean deleteResult = commentService.deleteCommentByboardId( //덧글 서비스 리퀘스트 dto를 생성합니다.
-                new CommentServiceRequestDto(
-                        (Long) session.getAttribute("userId"),
-                        boardId,
-                        commentRequestDto.getCommentId()));
-        if (deleteResult) {
+
+        commentService.deleteCommentByboardId( new CommentServiceRequestDto(
+                authService.getLoginUserId(),
+                boardId,
+                commentRequestDto.getCommentId())); //덧글 서비스 리퀘스트 dto를 생성합니다.
+
             return new ResponseEntity<>(HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+
 
     }
 
+    @PostMapping("/{boardId}/comments/like")
+    public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
+        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{boardId}/comments/unlike")
+    public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
+        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+    }
 
 
 }

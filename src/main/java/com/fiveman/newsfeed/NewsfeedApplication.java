@@ -13,4 +13,5 @@ public class NewsfeedApplication {
         SpringApplication.run(NewsfeedApplication.class, args);
     }
 
+
 }

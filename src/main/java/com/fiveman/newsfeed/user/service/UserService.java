@@ -21,12 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
-
-
     public UserDto createUser(SignupRequestDto request) {
         isDuplicateEmail(request.email());
-
-        validatePassword(request.password());
 
         User user = userRepository.save(User.of(request.username(), request.email(), encoder.encode(request.password()), request.age()));
 
@@ -34,13 +30,14 @@ public class UserService {
     }
 
     public UserResponseDto findByEmail(String email) {
-        User user = userRepository.findByEmailOrElseThrow(email);
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Does not exist email = " + email));
 
         return new UserResponseDto(user.getUsername(),user.getEmail());
     }
 
     public Page<UserDto> findAll(Pageable pageable) {
-        return userRepository.findAll(pageable)
+        return userRepository.findAllUsers(pageable)
                 .map(UserDto::from);
     }
 
@@ -51,19 +48,26 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(String email, String username, short age) {
+    public void updateUser(Long id,String username, Short age) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
 
-        //todo 사용자가 입력하지 않을경우 원래 값을 출력
-        User user = userRepository.findByEmailOrElseThrow(email);
+        if(username != null && !username.isEmpty()){
+            user.updateUsername(username);
+        }
 
-        user.updateUser(username,age);
+        if (age != null) {
+            user.updateAge(age);
+        }
     }
 
     @Transactional
-    public void updatePassword(String email, String oldPassword, String newPassword) {
+    public void updatePassword(Long id, String oldPassword, String newPassword) {
 
-        User user = userRepository.findByEmailOrElseThrow(email);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         if (!encoder.matches(oldPassword, user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
@@ -73,37 +77,16 @@ public class UserService {
             throw new IllegalArgumentException("새로운 비밀번호와 원래 비밀번호가 동일합니다.");
         }
 
-        validatePassword(newPassword);
-
         String password = encoder.encode(newPassword);
 
         user.updatePassword(password);
         userRepository.save(user);
     }
 
-    private void validatePassword(String newPassword) {
-        if (newPassword.length() < 8) {
-            throw new IllegalArgumentException("비밀번호는 최소 8자 이상이어야 합니다.");
-        }
-        if (!newPassword.matches(".*[A-Z].*")) {
-            throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 대문자를 포함해야 합니다.");
-        }
-        if (!newPassword.matches(".*[a-z].*")) {
-            throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 소문자를 포함해야 합니다.");
-        }
-        if (!newPassword.matches(".*[0-9].*")) {
-            throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 숫자를 포함해야 합니다.");
-        }
-        if (!newPassword.matches(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>/?].*")) {
-            throw new IllegalArgumentException("비밀번호는 최소 하나 이상의 특수 문자를 포함해야 합니다.");
-        }
-    }
+    public void delete(Long id) {
 
-    public void delete(String email) {
-
-        //todo 비밀번호 를 입력받아서 하는거로 변경, email 받을 필요없이 url 로 하는것
-
-        User user = userRepository.findByEmailOrElseThrow(email);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         user.updateIsDelete(true);
         userRepository.save(user);
@@ -111,6 +94,11 @@ public class UserService {
 
     public User findById(Long id) {
         return userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    public User findLoginUserByEmail(String email) {
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 }
