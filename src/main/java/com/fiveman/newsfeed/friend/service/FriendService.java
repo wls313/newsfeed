@@ -23,10 +23,10 @@ public class FriendService {
     private final UserService userService;
 
     @Transactional
-    public void create(Long fromUserId, FriendRequestDto request) {
+    public void create(Long fromUserId, Long toUserId) {
 
         User fromUser = userService.findById(fromUserId);
-        User toUser = userService.findById(request.toUserId());
+        User toUser = userService.findById(toUserId);
 
         // 정적 팩토리 메서드를 이용해 Friend 객체 생성 후 DB 저장
         friendRepository.save(Friend.of(fromUser, toUser, "PENDING"));

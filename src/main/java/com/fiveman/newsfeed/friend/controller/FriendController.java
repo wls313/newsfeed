@@ -20,12 +20,12 @@ public class FriendController {
     private final FriendService friendService;
     private final AuthService authService;
 
-    @PostMapping
-    public ResponseEntity<Void> create(@RequestBody FriendRequestDto request) {
+    @PostMapping("/{toUserId}")
+    public ResponseEntity<Void> create(@PathVariable Long toUserId) {
 
         Long loginUserId = authService.getLoginUserId();
 
-        friendService.create(loginUserId, request);
+        friendService.create(loginUserId, toUserId);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
