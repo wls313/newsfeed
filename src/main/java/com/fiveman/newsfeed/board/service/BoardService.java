@@ -36,14 +36,7 @@ public class BoardService {
         Board board = new Board(title, contents, user);
 
         boardRepository.save(board);
-        return new BoardResponseDto(board.getBoardId(),
-                                    board.getTitle(),
-                                    board.getContent(),
-                                    board.getLikeCount(),
-                                    board.getCreateAt(),
-                                    board.getUpdatedAt(),
-                                    board.getUser().getEmail(),
-                                    board.getUser().getUsername());
+        return new BoardResponseDto(board);
     }
 
     // 모든 게시물 조회 메서드 추가
@@ -67,7 +60,7 @@ public class BoardService {
         }
 
         if(filter != null) {
-            return sortSearchBoard(filter, myId, pageable);
+            return filterSearchBoard(filter, myId, pageable);
         }
 
         if (title != null) {
@@ -77,7 +70,7 @@ public class BoardService {
         return boardRepository.findByOrderByUpdatedAtDesc(pageable);
     }
 
-    public Page<BoardResponseDto> sortSearchBoard(String filter, Long id, Pageable pageable) {
+    public Page<BoardResponseDto> filterSearchBoard(String filter, Long id, Pageable pageable) {
         Page<BoardResponseDto> boardList = new PageImpl<>(new ArrayList<>());
 
         if(filter.equals("likeCount")) {
