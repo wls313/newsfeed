@@ -34,6 +34,11 @@ public class BoardController {
         return new ResponseEntity<>(boardService.createBoard(myId, dto.title(), dto.contents()), HttpStatus.OK);
     }
 
+    @GetMapping("/{boardId}")
+    public ResponseEntity<BoardResponseDto> getBoard(@PathVariable Long boardId) {
+        return new ResponseEntity<>(boardService.getBoard(boardId), HttpStatus.OK);
+    }
+
     @GetMapping
     public ResponseEntity<Page<BoardResponseDto>> getBoards(@PageableDefault(size = 10) Pageable pageable,
                                                             @RequestParam(required = false) Long userId,
