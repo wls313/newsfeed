@@ -83,10 +83,16 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public void delete(Long id) {
+    public void delete(Long id,String password) {
+
+
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
+
+        if (!encoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 올바르지 않습니다.");
+        }
 
         user.updateIsDelete(true);
         userRepository.save(user);
