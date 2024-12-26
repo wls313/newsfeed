@@ -68,8 +68,8 @@ public class BoardService {
             return boardRepository.findByperiod(start, end, pageable);
         }
 
-        if(sort != null && sort.equals("likeCount")) {
-            return boardRepository.findByOrderByLikeCountDesc(pageable);
+        if(sort != null) {
+            return sortSearchBoard(sort, pageable);
         }
 
         if (title != null) {
@@ -77,6 +77,16 @@ public class BoardService {
         }
 
         return boardRepository.findByOrderByUpdatedAtDesc(pageable);
+    }
+
+    public Page<BoardResponseDto> sortSearchBoard(String sort, Pageable pageable) {
+        if(sort.equals("likeCount")) {
+            return boardRepository.findByOrderByLikeCountDesc(pageable);
+        }
+        return boardRepository.findByOrderByLikeCountDesc(pageable);
+//        if(sort.equals("friend")) {
+//
+//        }
     }
 
     @Transactional
