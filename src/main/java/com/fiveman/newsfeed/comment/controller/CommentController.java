@@ -6,6 +6,7 @@ import com.fiveman.newsfeed.comment.service.CommentService;
 import com.fiveman.newsfeed.like.dto.LikeCommentRequestDto;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class CommentController {
     private final CommentService commentService;
 
     @GetMapping("/{boardId}/comments")
-    public ResponseEntity<List<CommentResponseDto>> findByAllComment(@PathVariable Long boardId) {
+    public ResponseEntity<List<CommentResponseDto>> findByAllComment(@PathVariable @NotNull(message="게시물ID는 빈 값일 수 없습니다.") Long boardId) {
 
         return new ResponseEntity<>(commentService.findByAllComment(
                 new CommentServiceRequestDto(
@@ -29,7 +30,7 @@ public class CommentController {
     }
 
     @PostMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid CreateCommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentResponseDto> createCommentByboardId(@PathVariable @NotNull(message="게시물ID는 빈 값일 수 없습니다.") Long boardId, @RequestBody @Valid CreateCommentRequestDto commentRequestDto) {
 
 
         return new ResponseEntity<>(commentService.createCommentByboardId(
@@ -43,7 +44,7 @@ public class CommentController {
     }
 
     @PatchMapping("/{boardId}/comments")
-    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid UpdateCommentRequestDto commentRequestDto) {
+    public ResponseEntity<CommentResponseDto> updateCommentByboardId(@PathVariable @NotNull(message="게시물ID는 빈 값일 수 없습니다.") Long boardId, @RequestBody @Valid UpdateCommentRequestDto commentRequestDto) {
 
 
         return new ResponseEntity<>(commentService.updateCommentByboardId(
@@ -58,14 +59,14 @@ public class CommentController {
                 HttpStatus.OK);
     }
 
-    @DeleteMapping("/{boardId}/comments")
-    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable Long boardId, @RequestBody @Valid DeleteCommentRequestDto commentRequestDto) {
+    @DeleteMapping("/{boardId}/comments/{commentId}")
+    public ResponseEntity<Void> deleteCommentByboardId(@PathVariable @NotNull(message="게시물ID는 빈 값일 수 없습니다.") Long boardId, @PathVariable @NotNull(message="덧글ID를 비워둘 수 없습니다.") Long commentId) {
 
 
         commentService.deleteCommentByboardId( new CommentServiceRequestDto(
                 authService.getLoginUserId(),
                 boardId,
-                commentRequestDto.getCommentId())); //덧글 서비스 리퀘스트 dto를 생성합니다.
+                commentId)); //덧글 서비스 리퀘스트 dto를 생성합니다.
 
             return new ResponseEntity<>(HttpStatus.OK);
 
@@ -74,12 +75,16 @@ public class CommentController {
 
     @PostMapping("/{boardId}/comments/like")
     public ResponseEntity<LikeResponseDto> likeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+        Long myId = authService.getLoginUserId();
+
+        return new ResponseEntity<>(commentService.likeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
     }
 
     @DeleteMapping("/{boardId}/comments/unlike")
     public ResponseEntity<LikeResponseDto> unlikeComment(@PathVariable Long boardId, @RequestBody LikeCommentRequestDto dto) {
-        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), dto.userId()), HttpStatus.OK);
+        Long myId = authService.getLoginUserId();
+
+        return new ResponseEntity<>(commentService.unlikeComment(boardId, dto.commentId(), myId), HttpStatus.OK);
     }
 
 

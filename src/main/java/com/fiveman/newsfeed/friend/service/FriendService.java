@@ -26,6 +26,17 @@ public class FriendService {
     @Transactional
     public void create(Long fromUserId, Long toUserId) {
 
+        isValidSelf(fromUserId, toUserId);
+
+        List<Friend> friendPending = friendRepository.findByStatusIsPendingAndFromUserId(fromUserId,toUserId);
+        List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
+
+        if(!friendAccept.isEmpty()) {
+            throw new RuntimeException("이미 친구입니다.");
+        } else if (!friendPending.isEmpty()) {
+            throw new RuntimeException("이미 보내진 요청입니다");
+        }
+
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
 
@@ -51,6 +62,7 @@ public class FriendService {
 
     public void deleteFriend(Long fromUserId, Long toUserId) {
 
+        isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
 
         List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
@@ -59,13 +71,15 @@ public class FriendService {
             throw new RuntimeException("잘못된 요청입니다.");
         }
 
-        friendRepository.deleteFriendByFromUserToUser(fromUserId, toUserId);
-        friendRepository.deleteFriendByFromUserToUser(toUserId, fromUserId);
+        friendRepository.deleteFriendByFromUserToUser(fromUserId,toUserId);
+        friendRepository.deleteFriendByFromUserToUser(toUserId,fromUserId);
+
     }
 
     @Transactional
     public void acceptFriendRequest(Long fromUserId, Long toUserId) {
 
+        isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
 
         User fromUser = userService.findById(fromUserId);
@@ -80,18 +94,22 @@ public class FriendService {
     @Transactional
     public void deleteFriendRequest(Long fromUserId, Long toUserId) {
 
+        isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
 
         friendRepository.deleteFriendByFromUserToUser(fromUserId, toUserId);
     }
 
+    public void isValidSelf(Long fromUserId, Long toUserId) {
+
+        if(Objects.equals(fromUserId, toUserId)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신에게 요청을 보낼 수 없습니다.");
+        }
+    }
+
     public void isValid(Long fromUserId, Long toUserId) {
         if(!friendRepository.existsByFromUser_UserIdAndToUser_UserId(fromUserId, toUserId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "찾을 수 없는 요청입니다.");
-        }
-
-        else if(Objects.equals(fromUserId, toUserId)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "자기 자신에게 요청을 보낼 수 없습니다.");
         }
     }
 }
