@@ -23,9 +23,9 @@ public class FriendService {
     private final UserService userService;
 
     @Transactional
-    public void create(FriendRequestDto request) {
+    public void create(Long fromUserId, FriendRequestDto request) {
 
-        User fromUser = userService.findById(request.fromUserId());
+        User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(request.toUserId());
 
         // 정적 팩토리 메서드를 이용해 Friend 객체 생성 후 DB 저장
@@ -51,6 +51,8 @@ public class FriendService {
     public void deleteFriend(Long fromUser, Long toUser) {
 
         friendRepository.deleteFriendByFromUserToUser(fromUser,toUser);
+        friendRepository.deleteFriendByFromUserToUser(toUser,fromUser);
+
     }
 
     @Transactional
