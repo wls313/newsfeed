@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.fiveman.newsfeed.common.entity.User;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -19,7 +21,12 @@ public class Board extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardId;
 
+    @NotBlank(message = "제목은 공백이 될 수 없습니다")
+    @Size(max = 10, message = "제목은 10자 이하이어야 합니다")
     private String title;
+
+    @NotBlank(message = "내용은 공백이 될 수 없습니다")
+    @Size(max = 200, message = "내용은 200자 이하이어야 합니다")
     private String content;
 
     private Integer likeCount = 0;
