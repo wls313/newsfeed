@@ -48,7 +48,7 @@ public class UserService {
     }
 
     @Transactional
-    public void updateUser(Long id,String username, Short age) {
+    public UserResponseDto updateUser(Long id,String username, Short age) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
@@ -61,6 +61,8 @@ public class UserService {
         if (age != null) {
             user.updateAge(age);
         }
+
+        return new UserResponseDto(user.getUsername(),user.getEmail());
     }
 
     @Transactional
