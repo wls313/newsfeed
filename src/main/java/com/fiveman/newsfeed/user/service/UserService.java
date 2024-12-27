@@ -21,6 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
 
+    private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$";
+
     public UserDto createUser(SignupRequestDto request) {
         isDuplicateEmail(request.email());
 
@@ -79,15 +81,21 @@ public class UserService {
             throw new IllegalArgumentException("새로운 비밀번호와 원래 비밀번호가 동일합니다.");
         }
 
+        if (!isValidPassword(newPassword)) {
+            throw new IllegalArgumentException("비밀번호는 최소 8자 이상이며, 대문자, 소문자, 숫자, 특수문자를 하나 이상 포함해야 합니다.");
+        }
+
         String password = encoder.encode(newPassword);
 
         user.updatePassword(password);
         userRepository.save(user);
     }
 
+    private boolean isValidPassword(String password) {
+        return password != null && password.matches(PASSWORD_REGEX);
+    }
+
     public void delete(Long id,String password) {
-
-
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"해당하는 유저가 없습니다."));
