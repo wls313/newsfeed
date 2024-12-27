@@ -74,7 +74,7 @@ public class FriendService {
         List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
 
         if(friendAccept.isEmpty()) {
-            throw new IllegalArgumentException("잘못된 요청입니다.");
+            throw new IllegalArgumentException("현재 친구가 아닙니다.");
         }
 
         friendRepository.deleteFriendByFromUserToUser(fromUserId,toUserId);
@@ -108,6 +108,12 @@ public class FriendService {
 
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
+
+        List<Friend> friendPending = friendRepository.findByStatusIsPendingAndFromUserId(fromUserId,toUserId);
+
+        if (friendPending.isEmpty()) {
+            throw new IllegalArgumentException("존재하지않는 친구 요청입니다.");
+        }
 
         Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
 
