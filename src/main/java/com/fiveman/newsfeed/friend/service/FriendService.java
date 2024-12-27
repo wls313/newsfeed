@@ -26,6 +26,7 @@ public class FriendService {
     @Transactional
     public void create(Long fromUserId, Long toUserId) {
 
+
         if(userService.findById(toUserId).isDeleted()) {
             throw new IllegalArgumentException("삭제된 유저입니다");
         }
@@ -45,6 +46,10 @@ public class FriendService {
 
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
+
+        if (fromUser == null || toUser == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다.");
+        }
 
         // 정적 팩토리 메서드를 이용해 Friend 객체 생성 후 DB 저장
         friendRepository.save(Friend.of(fromUser, toUser, "PENDING"));
@@ -74,8 +79,9 @@ public class FriendService {
         List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
 
         if(friendAccept.isEmpty()) {
-            throw new IllegalArgumentException("잘못된 요청입니다.");
+            throw new IllegalArgumentException("현재 친구가 아닙니다.");
         }
+
 
         friendRepository.deleteFriendByFromUserToUser(fromUserId,toUserId);
         friendRepository.deleteFriendByFromUserToUser(toUserId,fromUserId);
@@ -88,10 +94,22 @@ public class FriendService {
         isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
 
+        List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
+
+        if(!friendAccept.isEmpty()) {
+            throw new IllegalArgumentException("이미 친구입니다.");
+        }
+
+
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
         
         Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
+
+        if (friend == null || !"PENDING".equals(friend.getStatus())) {
+            throw new IllegalArgumentException("잘못된 요청입니다");
+        }
+
         friend.setStatus("ACCEPTED");
         
         friendRepository.save(Friend.of(toUser, fromUser, "ACCEPTED"));
@@ -103,9 +121,15 @@ public class FriendService {
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
 
+        List<Friend> friendPending = friendRepository.findByStatusIsPendingAndFromUserId(fromUserId,toUserId);
+
+        if (friendPending.isEmpty()) {
+            throw new IllegalArgumentException("존재하지않는 친구 요청입니다.");
+        }
+
         Friend friend = friendRepository.findByFromUserAndToUser(fromUser, toUser);
 
-        if(!friend.getStatus().equals("PENDING")) {
+        if(friend == null || !friend.getStatus().equals("PENDING")) {
             throw new IllegalArgumentException("잘못된 요청입니다");
         }
 
