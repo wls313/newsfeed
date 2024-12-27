@@ -1,6 +1,8 @@
 package com.fiveman.newsfeed.common.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
@@ -26,6 +28,8 @@ public class Comment extends BaseEntity {
     @ManyToOne
     private Board board;
 
+    @NotBlank
+    @Size(max = 200, message = "내용은 200자 이하이어야 합니다")
     @Column(name = "content",nullable=false)
     private String content;
 
