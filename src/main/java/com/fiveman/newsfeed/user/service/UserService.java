@@ -33,7 +33,7 @@ public class UserService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, email+"를 이메일로 가진 유저가 없습니다."));
 
-        return new UserResponseDto(user.getUsername(),user.getEmail());
+        return new UserResponseDto(user.getUsername(),user.getEmail(),user.getAge());
     }
 
     public Page<UserDto> findAll(Pageable pageable) {
@@ -62,7 +62,7 @@ public class UserService {
             user.updateAge(age);
         }
 
-        return new UserResponseDto(user.getUsername(),user.getEmail());
+        return new UserResponseDto(user.getUsername(),user.getEmail(), user.getAge());
     }
 
     @Transactional
