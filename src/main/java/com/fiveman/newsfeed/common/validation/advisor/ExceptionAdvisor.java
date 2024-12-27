@@ -31,7 +31,7 @@ public class ExceptionAdvisor {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponseDto> argumentExceptionHandler(IllegalArgumentException exception ){
 
-        return new ResponseEntity<>(new ErrorResponseDto(HttpStatus.BAD_REQUEST.toString(),exception.getMessage()),HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorResponseDto(HttpStatus.NOT_FOUND.toString(),exception.getMessage()),HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ConstraintViolationException.class)

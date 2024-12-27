@@ -14,8 +14,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -105,7 +107,7 @@ public class BoardService {
             board.updateBoard(title, contents); // Board의 메서드를 호출하여 수정
             return new BoardResponseDto(board); // 변경된 엔티티는 JPA의 트랜잭션 관리에 의해 자동 저장
         }else {
-             throw new IllegalArgumentException("작성자가 아닙니다.");
+             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"작성자가 아닙니다.");
         }
     }
 
@@ -116,7 +118,7 @@ public class BoardService {
         if(board.getUser().getUserId()==authService.getLoginUserId()) {
         boardRepository.deleteById(boardId); // JPA의 기본 deleteById 메서드 사용
     }else {
-            throw new IllegalArgumentException("작성자가 아닙니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED,"작성자가 아닙니다.");
         }
     }
 

@@ -47,12 +47,12 @@ public class CommentService {
     public CommentResponseDto updateCommentByboardId(CommentServiceRequestDto commentServiceRequestDto) {
 
         Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentServiceRequestDto.getCommentId(), commentServiceRequestDto.getBoardId()).orElseThrow(()
-                -> new IllegalArgumentException("덧글이나 게시글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException("댓글이나 게시글이 데이터베이스에 없습니다."));
         if (comment.getUser().getUserId().equals(commentServiceRequestDto.getUserId())) {
             comment.updateContent(commentServiceRequestDto.getContent());
             return CommentResponseDto.of(comment);
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "덧글작성자 본인만 수정이 가능합니다.");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "댓글작성자 본인만 수정이 가능합니다.");
         }
 
     }
@@ -64,7 +64,7 @@ public class CommentService {
         User boardUser = userRepository.findById(board.getUser().getUserId()).orElseThrow(()
                 -> new IllegalArgumentException("게시글의 작성자가 데이터베이스에 없습니다."));
         Comment comment = commentRepository.findById(commentServiceRequestDto.getCommentId()).orElseThrow(()
-                -> new IllegalArgumentException("덧글이 데이터베이스에 없습니다."));
+                -> new IllegalArgumentException("댓글이 데이터베이스에 없습니다."));
         if (boardUser.getUserId() == commentServiceRequestDto.getUserId() || comment.getUser().getUserId() == commentServiceRequestDto.getUserId()) {
             commentRepository.deleteById(commentServiceRequestDto.getCommentId());
         } else {
@@ -75,13 +75,13 @@ public class CommentService {
 
     @Transactional
     public LikeResponseDto likeComment(Long boardId, Long commentId, Long userId) {
-        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException("댓글이나 게시글이 데이터베이스에 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저아이디가 데이터베이스에 없습니다."));
 
         Like like = new Like(comment, user);
 
         if (likeRepository.existsById(like.getLikeId())) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("댓글 당 좋아요는 한번만 누를 수 있습니다.");
         }
 
         likeRepository.save(like);
@@ -92,15 +92,15 @@ public class CommentService {
 
     @Transactional
     public LikeResponseDto unlikeComment(Long boardId, Long commentId, Long userId) {
-        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException());
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException());
+        Comment comment = commentRepository.findByCommentIdAndBoard_BoardId(commentId, boardId).orElseThrow(() -> new IllegalArgumentException("댓글이나 게시글이 데이터베이스에 없습니다."));
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("유저아이디가 데이터베이스에 없습니다."));
         Like like = new Like(comment, user);
 
         if (likeRepository.existsById(like.getLikeId())) {
             likeRepository.deleteById(like.getLikeId());
             comment.unlike(user);
         } else {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("이미 댓글 좋아요가 취소되었거나 좋아요를 누른적이 없습니다.");
         }
 
         return new LikeResponseDto("댓글 좋아요를 취소했습니다", comment.getLikeCount());
