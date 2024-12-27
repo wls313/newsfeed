@@ -88,6 +88,12 @@ public class FriendService {
         isValidSelf(fromUserId, toUserId);
         isValid(fromUserId, toUserId);
 
+        List<Friend> friendAccept = friendRepository.findByStatusIsAcceptedAndFromUserId(fromUserId,toUserId);
+
+        if(!friendAccept.isEmpty()) {
+            throw new IllegalArgumentException("이미 친구입니다.");
+        }
+
         User fromUser = userService.findById(fromUserId);
         User toUser = userService.findById(toUserId);
         
