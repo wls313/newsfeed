@@ -48,9 +48,9 @@ public class UserController {
     public ResponseEntity<UserResponseDto> updateUser (@RequestBody UserRequestDto requestDto){
 
         Long loginId = authService.getLoginUserId();
-        userService.updateUser(loginId,requestDto.getUsername(),requestDto.getAge());
+        UserResponseDto userResponseDto = userService.updateUser(loginId, requestDto.getUsername(), requestDto.getAge());
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(userResponseDto, HttpStatus.OK);
     }
 
     @PatchMapping("/password")
@@ -62,9 +62,8 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{password}")
-    public ResponseEntity<UserResponseDto> delete(@PathVariable String password) {
-
+    @DeleteMapping
+    public ResponseEntity<UserResponseDto> deleteUser (@RequestParam String password) {
 
         Long loginId = authService.getLoginUserId();
         userService.delete(loginId,password);

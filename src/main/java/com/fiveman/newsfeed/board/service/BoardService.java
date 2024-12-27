@@ -9,6 +9,7 @@ import com.fiveman.newsfeed.common.entity.User;
 import com.fiveman.newsfeed.like.LikeRepository;
 import com.fiveman.newsfeed.like.dto.LikeResponseDto;
 import com.fiveman.newsfeed.user.service.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +33,7 @@ public class BoardService {
     private final AuthService authService;
 
 
+    @Transactional
     public BoardResponseDto createBoard(Long id, String title, String contents) {
         User user = userService.findById(id);
 
